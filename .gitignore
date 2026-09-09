@@ -1,0 +1,66 @@
+# ===== 参考项目（只读，不提交） =====
+otherfiles/
+
+# ===== 项目文档（不提交，仅本地参考） =====
+files/
+api/storage/
+rag-demo*.txt
+
+# ===== 编辑器 / IDE =====
+.vscode/
+.idea/
+.kiro/
+.cursor/
+AGENT.md
+# ===== 环境变量与密钥 =====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ===== SSL 证书（人工传到服务器，不进 git） =====
+web/certs/
+
+# ===== Python / 后端 =====
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+.python-version
+files/
+# ===== Node / 前端 =====
+node_modules/
+.pnp
+.pnp.js
+dist-ssr/
+*.local
+.vite/
+coverage/
+.vscode/
+# ===== 构建产物 =====
+*.log
+logs/
+tmp/
+temp/
+api/celerybeat-schedule.dir
+api/celerybeat-schedule.dat
+web/tsconfig.tsbuildinfo
+api/celerybeat-schedule.bak
+
+# ===== 评测（eval）=====
+api/eval/results/
+api/eval/cache/
+# 评测脚本与 fixtures 进 git，密钥文件不进、模板要进
+!.env.eval.example

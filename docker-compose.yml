@@ -1,0 +1,121 @@
+services:
+  # ============ 存储层 ============
+  postgres:
+    image: postgres:16-alpine
+    container_name: zhiyi-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-zhiyi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zhiyi}
+      POSTGRES_DB: ${POSTGRES_DB:-zhiyi}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zhiyi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    build: ./docker/es
+    image: zhiyi-es-ik:8.17.0
+    container_name: zhiyi-es
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  neo4j:
+    image: neo4j:5.26
+    container_name: zhiyi-neo4j
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-zhiyineo4j}
+      NEO4J_server_memory_heap_max__size: 1G
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: zhiyi-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # ============ 应用层 ============
+  api:
+    build: ./api
+    container_name: zhiyi-api
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+      ES_HOST: http://elasticsearch:9200
+      NEO4J_URI: bolt://neo4j:7687
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api/storage:/app/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  worker:
+    build: ./api
+    container_name: zhiyi-worker
+    command: celery -A app.celery_app.celery_app worker -l info -Q default,parse,memory --pool=threads --concurrency=6
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+      ES_HOST: http://elasticsearch:9200
+      NEO4J_URI: bolt://neo4j:7687
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    volumes:
+      - ./api/storage:/app/storage
+    depends_on:
+      - redis
+      - api
+
+  web:
+    build: ./web
+    container_name: zhiyi-web
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  pg_data:
+  es_data:
+  neo4j_data:
+  redis_data:
