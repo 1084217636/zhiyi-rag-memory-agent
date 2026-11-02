@@ -81,6 +81,13 @@ services:
         limits:
           memory: 512m
 
+  beat:
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
   web:
     restart: unless-stopped
     # 宿主 80 端口；生产 HTTPS 建议由独立网关或云负载均衡终止。

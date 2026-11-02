@@ -265,6 +265,8 @@ class LLMClient:
             reasons = _finish_reason(data)
             if reasons:
                 sp.set_attribute(GEN_AI_RESPONSE_FINISH_REASONS, reasons)
+            if "length" in reasons:
+                raise RuntimeError("模型输出达到 token 上限（finish_reason=length），拒绝把截断输出当作完整结果")
             text = data["choices"][0]["message"].get("content") or ""
             if not text.strip():
                 raise RuntimeError(

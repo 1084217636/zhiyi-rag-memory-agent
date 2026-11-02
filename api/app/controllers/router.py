@@ -11,11 +11,14 @@ from app.controllers import (
     mcp_controller,
     memory_controller,
     model_config_controller,
+    ops_controller,
+    research_controller,
     tool_controller,
 )
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(health_controller.router)
+api_router.include_router(ops_controller.router)
 api_router.include_router(auth_controller.router)
 api_router.include_router(model_config_controller.router)
 api_router.include_router(knowledge_base_controller.router)
@@ -25,3 +28,4 @@ api_router.include_router(memory_controller.router)
 api_router.include_router(chat_controller.router)
 api_router.include_router(mcp_controller.router)
 api_router.include_router(tool_controller.router)
+api_router.include_router(research_controller.router)

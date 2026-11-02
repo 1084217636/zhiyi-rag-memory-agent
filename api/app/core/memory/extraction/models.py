@@ -2,6 +2,10 @@
 
 仅在萃取过程内部使用，最终转换成 graph_models 的节点/边写入 Neo4j。
 """
+
+import math
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
@@ -13,7 +17,7 @@ def _to_float(v: object, default: float | None) -> float | None:
     if isinstance(v, bool):  # bool 是 int 子类，单独挡掉
         return default
     if isinstance(v, (int, float)):
-        return float(v)
+        return float(v) if math.isfinite(float(v)) else default
     if isinstance(v, str):
         s = v.strip()
         if not s:
@@ -27,17 +31,22 @@ def _to_float(v: object, default: float | None) -> float | None:
 
 # ── 陈述抽取 ──
 
+
 class ExtractedStatement(BaseModel):
     """从文本切出的原子陈述句。"""
 
     model_config = ConfigDict(extra="ignore")
     statement: str
-    statement_type: str = "FACT"  # FACT | OPINION | PREDICTION | SUGGESTION
-    temporal_type: str = "STATIC"  # STATIC | DYNAMIC | ATEMPORAL
+    statement_type: Literal["FACT", "OPINION", "PREDICTION", "SUGGESTION"] = (
+        "FACT"  # FACT | OPINION | PREDICTION | SUGGESTION
+    )
+    temporal_type: Literal["STATIC", "DYNAMIC", "ATEMPORAL"] = (
+        "STATIC"  # STATIC | DYNAMIC | ATEMPORAL
+    )
     has_unsolved_reference: bool = False
     # 记忆动力学：LLM 评分（0~1），缺省给中性默认
-    importance: float = 0.5  # 重要度
-    confidence: float = 0.8  # 置信度
+    importance: float = Field(default=0.5, ge=0, le=1)  # 重要度
+    confidence: float = Field(default=0.8, ge=0, le=1)  # 置信度
     # 情绪（含情绪时填，与 PG 情绪表并存：图谱情绪用于带情绪的记忆检索/画像）
     has_emotional_state: bool = False
     emotion_type: str | None = None
@@ -62,10 +71,11 @@ class ExtractedStatement(BaseModel):
 
 class StatementExtractionResult(BaseModel):
     model_config = ConfigDict(extra="ignore")
-    statements: list[ExtractedStatement] = Field(default_factory=list)
+    statements: list[ExtractedStatement]
 
 
 # ── 三元组抽取 ──
+
 
 class ExtractedEvent(BaseModel):
     """LLM 抽出的事件（一次性发生、有时间的经历）。"""
@@ -85,8 +95,8 @@ class ExtractedEntity(BaseModel):
     name: str
     type: str = "其他"  # LLM 偶尔漏填；缺省归入「其他」未知桶，避免整条结果校验失败
     description: str = ""
-    importance: float = 0.5  # 重要度（LLM 评分 0~1）
-    confidence: float = 0.8  # 置信度（LLM 评分 0~1）
+    importance: float = Field(default=0.5, ge=0, le=1)  # 重要度（LLM 评分 0~1）
+    confidence: float = Field(default=0.8, ge=0, le=1)  # 置信度（LLM 评分 0~1）
 
     @field_validator("importance", mode="before")
     @classmethod
@@ -112,8 +122,8 @@ class ExtractedTriplet(BaseModel):
     value: str | None = None
     valid_at: str | None = None
     invalid_at: str | None = None
-    importance: float = 0.5  # 关系重要度（LLM 评分 0~1）
-    confidence: float = 0.8  # 关系置信度（LLM 评分 0~1）
+    importance: float = Field(default=0.5, ge=0, le=1)  # 关系重要度（LLM 评分 0~1）
+    confidence: float = Field(default=0.8, ge=0, le=1)  # 关系置信度（LLM 评分 0~1）
 
     @field_validator("importance", mode="before")
     @classmethod
@@ -147,8 +157,10 @@ class TripletExtractionResult(BaseModel):
                 if not str(it.get("name") or "").strip():
                     continue  # 实体缺名字 → 丢弃
             elif field == "triplets":
-                if not (str(it.get("subject_name") or "").strip()
-                        and str(it.get("object_name") or "").strip()):
+                if not (
+                    str(it.get("subject_name") or "").strip()
+                    and str(it.get("object_name") or "").strip()
+                ):
                     continue  # 三元组缺主/宾名 → 丢弃
             elif field == "events":
                 if not str(it.get("title") or "").strip():
@@ -159,11 +171,12 @@ class TripletExtractionResult(BaseModel):
 
 # ── 实体去重判定 ──
 
+
 class DedupDecision(BaseModel):
     model_config = ConfigDict(extra="ignore")
     same_entity: bool = False
     canonical_idx: int = 0
-    confidence: float = 0.0
+    confidence: float = Field(default=0.0, ge=0, le=1)
     reason: str = ""
 
     @field_validator("confidence", mode="before")

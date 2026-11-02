@@ -12,7 +12,7 @@ import uuid
 from app.config import settings
 from app.core.llm.client import LLMClient
 from app.core.logging import get_logger
-from app.core.memory.retrieval.searcher import search_memory
+from app.core.memory.retrieval.searcher import search_memory, format_memory_context
 from app.repositories.neo4j.memory_graph_repository import MemoryGraphRepository
 
 logger = get_logger(__name__)
@@ -95,6 +95,9 @@ async def _do_recall(
                 query_vector=qvec,  # 复用已算好的向量，不重复 embedding
             )
             for h in hits:
+                if h.get("statements"):
+                    lines.append(format_memory_context([h]))
+                    continue
                 name = h.get("name") or ""
                 desc = (h.get("description") or "").strip()
                 prefix = _uncertain_prefix(h.get("confidence"))

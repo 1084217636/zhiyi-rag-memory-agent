@@ -65,6 +65,7 @@ def load(split: str = "dev", corpus_limit: int | None = None,
             "title": (row.get("title") or "").strip(),
             "text": (row.get("text") or "").strip(),
         })
+    retained_ids = {item["cid"] for item in corpus}
 
     # 加载 queries
     ds_queries = load_dataset(_HF_REPO, "queries", cache_dir=cache_dir, split="dev")
@@ -80,7 +81,7 @@ def load(split: str = "dev", corpus_limit: int | None = None,
         qid = str(row.get("query-id") or row.get("query_id"))
         cid = str(row.get("corpus-id") or row.get("corpus_id"))
         score = float(row.get("score") or 1.0)
-        if score <= 0:
+        if score <= 0 or cid not in retained_ids:
             continue
         qrel_by_query.setdefault(qid, []).append(cid)
 
@@ -92,5 +93,8 @@ def load(split: str = "dev", corpus_limit: int | None = None,
         queries.append({"qid": qid, "text": qmap[qid], "relevant_doc_ids": rel_cids})
     if query_limit is not None:
         queries = queries[:query_limit]
+
+    if not queries:
+        raise ValueError("当前 corpus 截取范围没有带有效相关文档的查询；请增大 corpus_limit")
 
     return {"corpus": corpus, "queries": queries, "split": split}

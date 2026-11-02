@@ -121,7 +121,8 @@ RELATION_SAVE = """
 UNWIND $rows AS row
 MATCH (a:Entity {id: row.source_id})
 MATCH (b:Entity {id: row.target_id})
-MERGE (a)-[r:RELATION {predicate: row.predicate, target_id: row.target_id}]->(b)
+MERGE (a)-[r:RELATION {predicate: row.predicate, target_id: row.target_id,
+                       statement_id: row.statement_id}]->(b)
 SET r.id = row.id,
     r.user_id = row.user_id,
     r.predicate_surface = row.predicate_surface,
@@ -265,6 +266,10 @@ ENTITY_NEIGHBORS = """
 MATCH (e:Entity {user_id: $user_id})
 WHERE e.id IN $entity_ids
 OPTIONAL MATCH (e)-[r:RELATION]->(o:Entity)
+WHERE r.statement_id IS NULL OR EXISTS {
+ MATCH (s:Statement {id:r.statement_id,user_id:$user_id})
+ WHERE coalesce(s.status,'active')='active' AND (s.expires_at IS NULL OR s.expires_at > $now)
+}
 RETURN e.id AS entity_id, e.name AS entity_name,
        r.predicate AS predicate, r.source_text AS source_text,
        coalesce(r.importance, 0.5) AS importance,
@@ -276,8 +281,9 @@ RETURN e.id AS entity_id, e.name AS entity_name,
 # 学历状态等信息往往完整保存在 Statement 文本中，需要一并提供给回答模型。
 ENTITY_SUPPORTING_STATEMENTS = """
 MATCH (s:Statement {user_id: $user_id})-[:MENTIONS]->(e:Entity {user_id: $user_id})
-WHERE e.id IN $entity_ids
-RETURN e.id AS entity_id, s.id AS statement_id, s.statement AS statement,
+WHERE e.id IN $entity_ids AND coalesce(s.status,'active')='active'
+  AND (s.expires_at IS NULL OR s.expires_at > $now)
+RETURN e.id AS entity_id, s.id AS statement_id, s.statement AS statement, coalesce(s.memory_kind,s.stmt_type,'FACT') AS memory_kind,
        s.valid_at AS valid_at, s.invalid_at AS invalid_at, s.dialog_at AS dialog_at,
        coalesce(s.confidence, 0.8) AS confidence
 ORDER BY coalesce(s.importance, 0.5) DESC, s.created_at DESC

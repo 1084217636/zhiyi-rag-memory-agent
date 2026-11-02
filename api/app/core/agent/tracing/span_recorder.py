@@ -167,6 +167,9 @@ class SpanRecorder:
             for ev in events:
                 if ev.kind == "trace_create" and ev.trace:
                     session.add(_trace_to_orm(ev.trace))
+                    # No ORM relationship links the records: explicitly persist
+                    # the parent before any span can trigger an autoflush.
+                    await session.flush()
                 elif ev.kind == "span_create" and ev.span:
                     session.add(_span_to_orm(ev.span))
                 elif ev.kind == "trace_update" and ev.trace:

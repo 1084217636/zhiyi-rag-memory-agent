@@ -15,15 +15,27 @@ export interface Conversation {
 }
 
 export interface Citation {
+  evidence_id?: string
   source_id: string
   source_type: string | null
   doc_name: string | null
+  chunk_id?: string | null
+  content?: string
   score: number | null
 }
 
 export interface ToolCall {
   tool: string
   query: string
+}
+
+export interface ToolResult {
+  tool: string
+  query: string
+  status: 'success' | 'error' | string
+  text?: string
+  latency_ms?: number
+  cached?: boolean
 }
 
 export interface ChatMessage {
@@ -46,6 +58,7 @@ export interface StreamHandlers {
   onMeta?: (data: { conversation_id: string; title: string }) => void
   onToken?: (text: string) => void
   onToolStart?: (data: ToolCall) => void
+  onToolResult?: (data: ToolResult) => void
   onCitation?: (citations: Citation[]) => void
   onDone?: (data: { conversation_id: string; message_id?: string }) => void
   onError?: (message: string) => void
@@ -54,6 +67,9 @@ export interface StreamHandlers {
 export const chatApi = {
   listConversations() {
     return client.get<unknown, Wrapped<Conversation[]>>('/conversations')
+  },
+  createConversation(title = '新对话') {
+    return client.post<unknown, Wrapped<Conversation>>('/conversations', { title })
   },
   listMessages(id: string) {
     return client.get<unknown, Wrapped<ChatMessage[]>>(`/conversations/${id}/messages`)
@@ -116,6 +132,7 @@ export async function streamChat(
       if (event === 'meta') handlers.onMeta?.(data as unknown as { conversation_id: string; title: string })
       else if (event === 'token') handlers.onToken?.(String(data.text ?? ''))
       else if (event === 'tool_start' || event === 'tool_call') handlers.onToolStart?.(data as unknown as ToolCall)
+      else if (event === 'tool_result') handlers.onToolResult?.(data as unknown as ToolResult)
       else if (event === 'citation') handlers.onCitation?.((data.citations as Citation[]) ?? [])
       else if (event === 'done') handlers.onDone?.(data as unknown as { conversation_id: string; message_id?: string })
       else if (event === 'error') handlers.onError?.(String(data.message ?? '生成失败'))

@@ -1,0 +1,83 @@
+{
+  "scope": "live configured model, synthetic text; not full browser/ingestion E2E",
+  "elapsed_seconds": 10.486,
+  "passed": 6,
+  "total": 6,
+  "cases": [
+    {
+      "case": "one input, multiple typed memories",
+      "passed": true,
+      "statements": [
+        {
+          "text": "用户在研究WiFi CSI",
+          "kind": "FACT"
+        },
+        {
+          "text": "用户目前住在北京",
+          "kind": "FACT"
+        },
+        {
+          "text": "用户计划下个月去深圳旅行",
+          "kind": "PLAN"
+        }
+      ]
+    },
+    {
+      "case": "explicit residence update",
+      "passed": true,
+      "decision": {
+        "action": "UPDATE",
+        "target_ids": [
+          "old-home"
+        ],
+        "confidence": 0.95,
+        "reason": "新陈述明确表示当前居住地已从北京变更为深圳，属于同一事实槽位的明确变化。"
+      }
+    },
+    {
+      "case": "coexisting preferences not overwritten",
+      "passed": true,
+      "decision": {
+        "action": "ADD",
+        "target_ids": [],
+        "confidence": 0.95,
+        "reason": "新陈述是用户喜欢咖啡，旧陈述是用户喜欢喝茶，属于不同饮品偏好，可同时存在，不构成重复或更正。"
+      }
+    },
+    {
+      "case": "supported numeric answer",
+      "passed": true,
+      "result": {
+        "text": "实验使用30个采样点。",
+        "status": "verified",
+        "evidence_ids": [
+          "K1"
+        ],
+        "attempts": 1,
+        "reason": "证据K1明确说明实验使用30个采样点，与候选答案完全一致。"
+      }
+    },
+    {
+      "case": "plan not converted to completed event",
+      "passed": true,
+      "result": {
+        "text": "无法确认你已经去过深圳。现有证据M1只表明你计划下个月去深圳旅行，属于计划，不能证明你此前已经去过深圳。",
+        "status": "verified",
+        "evidence_ids": [
+          "M1"
+        ],
+        "attempts": 2,
+        "reason": "候选答案正确指出M1仅为下个月去深圳旅行的计划，不能证明用户此前已去过深圳；结论“无法确认”与证据一致，未将计划当作已完成事件。"
+      }
+    },
+    {
+      "case": "live Agent selects both tools",
+      "passed": true,
+      "calls": [
+        "knowledge_search",
+        "memory_search"
+      ],
+      "answer": "两部分分别回答：\n\n**1. 文档中的采样点数量**\n根据文档（证据 K1）：实验采用 **30 个采样点**。\n\n**2. 你的研究方向**\n根据记忆（证据 M1）：你的研究方向是 **WiFi CSI**。"
+    }
+  ]
+}

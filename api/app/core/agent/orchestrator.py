@@ -13,6 +13,7 @@
 本编排器在产 tool_result 事件时读取并附在事件上，前端 chip 副文动态绑定。
 """
 import ast
+import asyncio
 import json
 import re
 import time
@@ -23,6 +24,8 @@ from langchain_core.tools import StructuredTool
 from langchain_openai import ChatOpenAI
 
 from app.core.agent.prompt_renderer import render_agent_prompt
+from app.config import settings
+from app.core.agent.runtime import ExecutionState, execute_tool, fit_context
 from app.core.agent.tracing import get_tracer
 from app.core.logging import get_logger
 
@@ -30,6 +33,7 @@ logger = get_logger(__name__)
 
 MAX_TOOL_ITERATIONS = 5
 MAX_TOOL_RESULT_PREVIEW = 600
+FINAL_ANSWER_TIMEOUT_SECONDS = 45
 
 
 def _format_observation(observation: object) -> str:
@@ -97,25 +101,91 @@ def _truncate(text: str) -> str:
     return text[:MAX_TOOL_RESULT_PREVIEW].rstrip() + "..."
 
 
+async def _finalize_without_tools(
+    model: ChatOpenAI,
+    messages: list,
+    *,
+    model_name: str,
+) -> AsyncGenerator[dict, None]:
+    """After the tool budget is exhausted, ask once for a bounded final answer.
+
+    Intermediate assistant text from tool-selection rounds is intentionally not
+    streamed to the client. This helper runs with no tools bound, so the model
+    can only synthesize from the conversation and tool observations already in
+    ``messages``.
+    """
+    final_messages = list(messages)
+    final_instruction = SystemMessage(
+        content=(
+            "工具调用次数已达到上限。现在请只根据当前对话和已经获得的工具结果，"
+            "给出完整的最终答复；不要再请求工具。若现有证据不足，请明确说明不确定之处。"
+        )
+    )
+    insert_at = 1 if final_messages and isinstance(final_messages[0], SystemMessage) else 0
+    final_messages.insert(insert_at, final_instruction)
+
+    fit_context(final_messages)
+    tracer = get_tracer()
+    final_model = model.bind(max_tokens=settings.agent_output_token_budget)
+    answer = ""
+    last_chunk = None
+    async with tracer.llm_span(
+        f"chat:{model_name} (final-only)",
+        model_name=model_name,
+        attributes={"zhiyi.chat.final_only": True},
+    ) as span:
+        span.set_payload("messages_count", len(final_messages))
+        async with asyncio.timeout(FINAL_ANSWER_TIMEOUT_SECONDS):
+            async for chunk in final_model.astream(final_messages):
+                last_chunk = chunk
+                if chunk.content:
+                    text = chunk.content if isinstance(chunk.content, str) else str(chunk.content)
+                    answer += text
+                    yield {"type": "token", "text": text}
+        usage = getattr(last_chunk, "usage_metadata", None) or {}
+        span.set_tokens(
+            input=int(usage.get("input_tokens", 0) or 0),
+            output=int(usage.get("output_tokens", 0) or 0),
+            model_name=model_name,
+        )
+        if answer:
+            span.set_payload("response_preview", answer[:600])
+
+    answer = answer.strip()
+    if not answer:
+        answer = "基于已获得的信息，暂时无法生成完整回答。"
+        yield {"type": "token", "text": answer}
+    yield {"type": "final", "text": answer}
+
+
 async def run_function_calling(
     model: ChatOpenAI,
     tools: list[StructuredTool],
     messages: list,
     stats_holder: dict[str, dict] | None = None,
 ) -> AsyncGenerator[dict, None]:
-    """强模型路径：原生 function calling 流式工具循环。"""
+    """强模型路径：原生 function calling 工具循环。
+
+    每轮先缓存模型文本，只有确认没有工具调用时才把它作为最终答案发出，
+    避免展示工具调用轮里的中间内容。
+    """
     tool_map = {t.name: t for t in tools}
-    model_with_tools = model.bind_tools(tools) if tools else model
-    full_text = ""
+    model_with_tools = (model.bind_tools(tools) if tools else model).bind(
+        max_tokens=settings.agent_output_token_budget
+    )
     stats_holder = stats_holder if stats_holder is not None else {}
     # 同一轮内的工具调用结果缓存：(工具名+参数) 相同则复用上次结果，
     # 不再重复握手+执行（消除模型用相同参数重复调同一工具的浪费）。
-    call_cache: dict[str, str] = {}
+    call_cache: dict[str, tuple[str, str]] = {}
     # 取真实 model_name 用于成本核算(LangChain ChatOpenAI 的 model_name 字段)
     chat_model_name = getattr(model, "model_name", None) or getattr(model, "model", "chat")
     tracer = get_tracer()
 
+    execution = ExecutionState()
     for iteration in range(MAX_TOOL_ITERATIONS):
+        fit_context(messages, tools)
+        if execution.cached_repeats >= 2:
+            break
         # 每轮 LLM 流式调用包一个 llm_call span,流完后从 usage_metadata 抽 token
         # 抓最后一条 user/tool 消息做请求摘要
         last_msg_text = ""
@@ -137,13 +207,12 @@ async def run_function_calling(
                 lsp.set_payload("request_summary", last_msg_text[:600])
             gathered = None
             iter_text = ""
-            async for chunk in model_with_tools.astream(messages):
-                if chunk.content:
-                    text = chunk.content if isinstance(chunk.content, str) else str(chunk.content)
-                    full_text += text
-                    iter_text += text
-                    yield {"type": "token", "text": text}
-                gathered = chunk if gathered is None else gathered + chunk
+            async with asyncio.timeout(settings.agent_model_timeout_seconds):
+                async for chunk in model_with_tools.astream(messages):
+                    if chunk.content:
+                        text = chunk.content if isinstance(chunk.content, str) else str(chunk.content)
+                        iter_text += text
+                    gathered = chunk if gathered is None else gathered + chunk
             # 抽 token 用量(stream_usage=True 后流尾的 chunk 带 usage_metadata)
             usage = getattr(gathered, "usage_metadata", None) or {}
             in_t = int(usage.get("input_tokens", 0) or 0)
@@ -163,15 +232,21 @@ async def run_function_calling(
 
         if not tool_calls:
             # 无工具调用 → 已是最终回答
-            yield {"type": "final", "text": full_text}
+            if iter_text:
+                yield {"type": "token", "text": iter_text}
+            yield {"type": "final", "text": iter_text}
             return
 
+        if execution.tool_calls + len(tool_calls) > settings.agent_max_tool_calls:
+            execution.stop_reason = "tool_call_budget"
+            break
         # 有工具调用：执行后把结果回灌，继续循环
         messages.append(gathered)
         for tc in tool_calls:
+            execution.tool_calls += 1
             name = tc.get("name", "")
             args = tc.get("args", {}) or {}
-            query = args.get("query", "")
+            query = args.get("query", "") if isinstance(args, dict) else ""
             yield {"type": "tool_start", "tool": name, "query": query}
             try:
                 cache_key = f"{name}:{json.dumps(args, ensure_ascii=False, sort_keys=True)}"
@@ -182,15 +257,16 @@ async def run_function_calling(
             t0 = time.monotonic()
             cached = call_cache.get(cache_key)
             if cached is not None:
+                execution.cached_repeats += 1
                 # 命中本轮缓存：相同工具+参数已调用过，直接复用，跳过握手与执行
-                formatted = cached
+                formatted, cached_status = cached
                 latency_ms = 0
                 stats: dict = {}
                 yield {
                     "type": "tool_result",
                     "tool": name,
                     "query": query,
-                    "status": "success",
+                    "status": cached_status,
                     "text": _truncate(formatted),
                     "stats": stats,
                     "latency_ms": latency_ms,
@@ -214,13 +290,15 @@ async def run_function_calling(
                     },
                 ) as tsp:
                     try:
-                        observation = await tool.ainvoke(args)
+                        observation, status = await execute_tool(tool, args, name)
                     except Exception as e:
-                        observation = f"工具执行失败：{e}"
+                        observation = f"工具执行失败：{type(e).__name__}"
                         status = "error"
-                        tsp.mark_error(str(e))
+                        tsp.mark_error(type(e).__name__)
                     obs_str = str(observation) if observation else ""
                     tsp.set_payload("status", status)
+                    if status == "error":
+                        tsp.mark_error(obs_str[:300])
                     tsp.set_payload("output_chars", len(obs_str))
                     if obs_str:
                         # 工具返回内容前 600 字预览,供 trace 详情面板展示
@@ -230,8 +308,8 @@ async def run_function_calling(
             latency_ms = int((time.monotonic() - t0) * 1000)
             stats = stats_holder.pop(name, {}) if stats_holder is not None else {}
             formatted = _format_observation(observation)
-            if status == "success":
-                call_cache[cache_key] = formatted
+            if status in {"success", "empty"}:
+                call_cache[cache_key] = (formatted, status)
             yield {
                 "type": "tool_result",
                 "tool": name,
@@ -245,8 +323,11 @@ async def run_function_calling(
                 ToolMessage(content=formatted, tool_call_id=tc.get("id", name))
             )
 
-    # 达到最大迭代仍未收敛：用现有内容兜底
-    yield {"type": "final", "text": full_text or "（未能生成回答）"}
+    # 工具轮数耗尽后，用一次禁用工具的调用整合现有证据。
+    async for event in _finalize_without_tools(
+        model, messages, model_name=chat_model_name
+    ):
+        yield event
 
 
 _ACTION_RE = re.compile(r"Action\s*:\s*(.+)")
@@ -272,12 +353,18 @@ async def run_react(
     convo: list = [SystemMessage(content=sys), *history, HumanMessage(content=user_text)]
     stats_holder = stats_holder if stats_holder is not None else {}
     # 同一轮内工具结果缓存（工具名+query 相同则复用）
-    call_cache: dict[str, str] = {}
+    call_cache: dict[str, tuple[str, str]] = {}
     # 取真实 model_name 用于 token / cost 记账
     react_model_name = getattr(model, "model_name", None) or getattr(model, "model", "chat")
     tracer = get_tracer()
 
+    execution = ExecutionState()
     for iteration in range(MAX_TOOL_ITERATIONS):
+        fit_context(convo, tools)
+        if execution.cached_repeats >= 2:
+            break
+        if execution.tool_calls >= settings.agent_max_tool_calls:
+            break
         async with tracer.llm_span(
             f"chat(ReAct):{react_model_name} (轮 {iteration + 1})",
             model_name=react_model_name,
@@ -286,7 +373,8 @@ async def run_react(
                 "zhiyi.chat.mode": "react",
             },
         ) as lsp:
-            resp = await model.ainvoke(convo)
+            async with asyncio.timeout(settings.agent_model_timeout_seconds):
+                resp = await model.bind(max_tokens=settings.agent_output_token_budget).ainvoke(convo)
             usage = getattr(resp, "usage_metadata", None) or {}
             in_t = int(usage.get("input_tokens", 0) or 0)
             out_t = int(usage.get("output_tokens", 0) or 0)
@@ -309,6 +397,7 @@ async def run_react(
             yield {"type": "final", "text": text}
             return
 
+        execution.tool_calls += 1
         tool_name = action_match.group(1).strip().splitlines()[0].strip()
         query = (input_match.group(1).strip().splitlines()[0].strip() if input_match else user_text)
         yield {"type": "tool_start", "tool": tool_name, "query": query}
@@ -319,12 +408,13 @@ async def run_react(
         t0 = time.monotonic()
         cached = call_cache.get(cache_key)
         if cached is not None:
-            formatted = cached
+            execution.cached_repeats += 1
+            formatted, cached_status = cached
             yield {
                 "type": "tool_result",
                 "tool": tool_name,
                 "query": query,
-                "status": "success",
+                "status": cached_status,
                 "text": _truncate(formatted),
                 "stats": {},
                 "latency_ms": 0,
@@ -347,13 +437,15 @@ async def run_react(
                 },
             ) as tsp:
                 try:
-                    observation = await tool.ainvoke({"query": query})
+                    observation, status = await execute_tool(tool, {"query": query}, tool_name)
                 except Exception as e:
-                    observation = f"工具执行失败：{e}"
+                    observation = f"工具执行失败：{type(e).__name__}"
                     status = "error"
-                    tsp.mark_error(str(e))
+                    tsp.mark_error(type(e).__name__)
                 obs_str = str(observation) if observation else ""
                 tsp.set_payload("status", status)
+                if status == "error":
+                    tsp.mark_error(obs_str[:300])
                 tsp.set_payload("output_chars", len(obs_str))
                 if obs_str:
                     tsp.set_payload("output_preview", obs_str[:600])
@@ -362,8 +454,8 @@ async def run_react(
         latency_ms = int((time.monotonic() - t0) * 1000)
         stats = stats_holder.pop(tool_name, {}) if stats_holder is not None else {}
         formatted = _format_observation(observation)
-        if status == "success":
-            call_cache[cache_key] = formatted
+        if status in {"success", "empty"}:
+            call_cache[cache_key] = (formatted, status)
         yield {
             "type": "tool_result",
             "tool": tool_name,
@@ -377,7 +469,11 @@ async def run_react(
         convo.append(AIMessage(content=text))
         convo.append(HumanMessage(content=f"Observation: {formatted}"))
 
-    yield {"type": "final", "text": "（多轮工具调用后仍未得到结论）"}
+    # ReAct 路径也必须在上限处生成可供 ChatService 保存的最终答复。
+    async for event in _finalize_without_tools(
+        model, convo, model_name=react_model_name
+    ):
+        yield event
 
 
 __all__ = ["run_function_calling", "run_react", "MAX_TOOL_ITERATIONS"]

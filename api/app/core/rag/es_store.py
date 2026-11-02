@@ -23,6 +23,7 @@ def build_chunk_doc(
     parent_id: str | None = None,
     tags: list[str] | None = None,
     kb_id: str | None = None,
+    chunk_policy: str | None = None,
 ) -> dict:
     """构造一条 ES chunk 文档。"""
     chunk_id = uuid.uuid4().hex
@@ -38,6 +39,7 @@ def build_chunk_doc(
             "chunk_id": chunk_id,
             "chunk_type": chunk_type,
             "parent_id": parent_id,
+            "chunk_policy": chunk_policy,
             "content": content,
             "tags": tags or [],
             "vector": vector,

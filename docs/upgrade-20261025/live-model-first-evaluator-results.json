@@ -1,0 +1,74 @@
+{
+  "scope": "live configured model, synthetic text; not full browser/ingestion E2E",
+  "elapsed_seconds": 6.907,
+  "passed": 4,
+  "total": 5,
+  "cases": [
+    {
+      "case": "one input, multiple typed memories",
+      "passed": true,
+      "statements": [
+        {
+          "text": "用户在研究WiFi CSI",
+          "kind": "FACT"
+        },
+        {
+          "text": "用户现在住在北京",
+          "kind": "FACT"
+        },
+        {
+          "text": "用户计划下个月去深圳旅行",
+          "kind": "PLAN"
+        }
+      ]
+    },
+    {
+      "case": "explicit residence update",
+      "passed": true,
+      "decision": {
+        "action": "UPDATE",
+        "target_ids": [
+          "old-home"
+        ],
+        "confidence": 0.95,
+        "reason": "新陈述明确表示当前居住地已从北京变更为深圳，属于同一事实槽位的明确变化。"
+      }
+    },
+    {
+      "case": "coexisting preferences not overwritten",
+      "passed": true,
+      "decision": {
+        "action": "ADD",
+        "target_ids": [],
+        "confidence": 0.95,
+        "reason": "新陈述表达对咖啡的偏好，旧陈述表达对茶的偏好，属于可同时存在的不同饮品偏好，不构成重复或更正。"
+      }
+    },
+    {
+      "case": "supported numeric answer",
+      "passed": true,
+      "result": {
+        "text": "实验使用30个采样点。",
+        "status": "verified",
+        "evidence_ids": [
+          "K1"
+        ],
+        "attempts": 1,
+        "reason": "证据K1明确说明实验使用30个采样点，与候选答案完全一致。"
+      }
+    },
+    {
+      "case": "plan not converted to completed event",
+      "passed": false,
+      "result": {
+        "text": "根据现有证据，无法确认你已经去过深圳。证据M1只表明你计划下个月去深圳旅行，这是计划，不是已经完成的行程。",
+        "status": "verified",
+        "evidence_ids": [
+          "M1"
+        ],
+        "attempts": 2,
+        "reason": "证据M1仅表明用户计划下个月去深圳旅行，属于计划而非已完成事件；候选答案正确指出无法确认用户已经去过深圳，未将计划当作已完成事实。"
+      }
+    }
+  ]
+}

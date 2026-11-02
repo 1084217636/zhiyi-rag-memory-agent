@@ -9,6 +9,7 @@ from app.controllers.router import api_router
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import get_logger, setup_logging
 from app.core.request_context import RequestContextMiddleware
+from app.core.http_metrics import RequestMetrics
 from app.db import elastic, neo4j, postgres, redis
 
 setup_logging()
@@ -17,6 +18,11 @@ logger = get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    # Fail before accepting requests if a production deployment still uses
+    # development signing/encryption keys.
+    if settings.app_env.lower() in {"production", "prod"}:
+        if settings.jwt_secret == "change-me-in-production" or settings.fernet_key == "change-me-fernet-key":
+            raise RuntimeError("production JWT_SECRET and FERNET_KEY must be configured")
     # 启动：自动把数据库升级到最新迁移（alembic upgrade head）
     from app.db.migrate import upgrade_to_head
 
@@ -38,8 +44,11 @@ async def lifespan(_: FastAPI):
         await ensure_graph_schema()
     except Exception as e:
         logger.warning("记忆图谱 schema 初始化失败（稍后可重试）: %s", e)
+    from app.core.agent.tracing.span_recorder import get_recorder
+    await get_recorder().start()
     logger.info("%s 启动完成", settings.app_name)
     yield
+    await get_recorder().stop()
     # 关闭：释放长连接 / 连接池
     await postgres.close()
     await elastic.close()
@@ -65,6 +74,9 @@ def create_app() -> FastAPI:
     )
     # 请求上下文（request_id）中间件
     app.add_middleware(RequestContextMiddleware)
+    metrics_registry = RequestMetrics()
+    app.state.request_metrics = metrics_registry
+    app.add_middleware(RequestMetrics, registry=metrics_registry)
 
     register_exception_handlers(app)
     app.include_router(api_router)

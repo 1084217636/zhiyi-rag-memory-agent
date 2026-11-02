@@ -10,7 +10,8 @@ from app.db.postgres import get_session
 from app.models.user_model import User
 from app.schemas.document_schema import SearchRequest, UrlImportRequest
 from app.schemas.knowledge_base_schema import MoveToKbRequest
-from app.services.document_service import DocumentService
+from app.core.exceptions import BizError
+from app.services.document_service import DocumentService, MAX_FILE_SIZE
 
 router = APIRouter(prefix="/documents", tags=["document"])
 
@@ -22,7 +23,10 @@ async def upload_document(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    content = await file.read()
+    # Reject before loading the entire upload into the API worker's memory.
+    content = await file.read(MAX_FILE_SIZE + 1)
+    if len(content) > MAX_FILE_SIZE:
+        raise BizError("文件超过 50MB 限制", code=3005)
     service = DocumentService(session)
     doc = await service.upload(user.id, file.filename or "未命名", content, kb_id)
     return success(await service.to_out_dict(doc), "上传成功，正在解析")

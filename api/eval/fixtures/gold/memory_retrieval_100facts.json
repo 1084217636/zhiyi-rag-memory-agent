@@ -1,0 +1,21 @@
+{
+  "memory_retrieval-01": ["用户", "产品经理"],
+  "memory_retrieval-02": ["住", "上海"],
+  "memory_retrieval-03": ["住", "徐汇"],
+  "memory_retrieval-04": ["用户", "布偶猫"],
+  "memory_retrieval-05": ["猫", "团子"],
+  "memory_retrieval-06": ["周末", "爬山"],
+  "memory_retrieval-07": ["学", "日语"],
+  "memory_retrieval-08": ["京都", "旅行"],
+  "memory_retrieval-09": ["索尼", "相机"],
+  "memory_retrieval-10": ["手机", "iphone"],
+  "memory_retrieval-11": ["喜欢", "拿铁"],
+  "memory_retrieval-12": ["爱吃", "火锅"],
+  "memory_retrieval-13": ["notion", "记笔记"],
+  "memory_retrieval-14": ["朋友", "王磊"],
+  "memory_retrieval-15": ["妹妹", "林晓"],
+  "memory_retrieval-16": ["林晓", "成都"],
+  "memory_retrieval-17": ["复旦大学", "毕业"],
+  "memory_retrieval-18": ["老家", "成都"],
+  "memory_retrieval-19": ["用户", "相机", "拍照"]
+}

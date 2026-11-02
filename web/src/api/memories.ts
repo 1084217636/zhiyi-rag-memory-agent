@@ -34,6 +34,20 @@ export interface MemoryListData {
   items: MemoryItem[]
 }
 
+export interface PendingMemoryStatement {
+  id: string
+  statement: string
+  kind: string
+  reason: string
+  targets: string[]
+}
+
+export interface MemoryPolicyStatus {
+  active_limit: number
+  counts: Record<string, number>
+  pending: PendingMemoryStatement[]
+}
+
 export interface MemoryRelation {
   predicate: string
   object_name: string | null
@@ -227,6 +241,12 @@ export const memoryApi = {
   },
   remove(id: string) {
     return client.delete<unknown, Wrapped<null>>(`/memories/${id}`)
+  },
+  policyStatus() {
+    return client.get<unknown, Wrapped<MemoryPolicyStatus>>('/memories/policy/status')
+  },
+  resolveStatement(id: string, action: 'keep_both' | 'replace' | 'reject') {
+    return client.post<unknown, Wrapped<null>>(`/memories/statements/${id}/resolve`, { action })
   },
   search(query: string, topK = 10) {
     return client.post<unknown, Wrapped<MemoryHit[]>>('/memories/search', {

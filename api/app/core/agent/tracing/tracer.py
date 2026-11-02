@@ -24,6 +24,7 @@
 """
 from __future__ import annotations
 
+import asyncio
 import contextvars
 import logging
 import random
@@ -38,6 +39,9 @@ from app.core.agent.tracing.pricing import estimate_cost_cny
 from app.core.agent.tracing.span_recorder import get_recorder
 
 logger = logging.getLogger(__name__)
+
+_CONTENT_PAYLOAD_KEYS = {"request_summary", "response_preview", "output_preview", "tool_query"}
+_CONTENT_ATTRIBUTE_KEYS = {"zhiyi.tool.query"}
 
 
 # ContextVar:当前 trace 与当前 span 栈(asyncio 任务安全)
@@ -69,6 +73,8 @@ class _SpanHandle:
     def set_attribute(self, key: str, value: Any) -> None:
         if self._noop:
             return
+        if key in _CONTENT_ATTRIBUTE_KEYS and not settings.trace_capture_content:
+            return
         # 仅接受 JSON 可序列化的简单值;复杂对象转 str
         try:
             self._record.attributes[key] = value  # type: ignore[union-attr]
@@ -82,8 +88,10 @@ class _SpanHandle:
             self.set_attribute(k, v)
 
     def set_payload(self, key: str, value: Any) -> None:
-        """payload 存输入输出的摘要(不存全文)。"""
+        """Keep operational fields; private content previews require opt-in."""
         if self._noop:
+            return
+        if key in _CONTENT_PAYLOAD_KEYS and not settings.trace_capture_content:
             return
         self._record.payload[key] = value  # type: ignore[union-attr]
 
@@ -125,7 +133,7 @@ class _SpanHandle:
         if self._noop or self._record is None:
             return
         self._record.status = "error"
-        self._record.error_message = message[:1000]  # 防超长
+        self._record.error_message = message[:1000] if settings.trace_capture_content else "error"
 
 
 class Tracer:
@@ -167,7 +175,11 @@ class Tracer:
 
         try:
             yield _TraceCtx(record)
-            record.status = "ok"
+            if record.status == "running":
+                record.status = "ok"
+        except asyncio.CancelledError:
+            record.status = "cancelled"
+            raise
         except Exception as e:
             record.status = "error"
             record.error_message = str(e)[:1000]
@@ -332,3 +344,10 @@ def push_llm_usage(resp_or_msg: Any, model: Any = None) -> None:
         model_name = getattr(model, "model_name", None) or getattr(model, "model", None)
     handle = _SpanHandle(sp)
     handle.set_tokens(input=in_t, output=out_t, cached=cached, model_name=model_name)
+
+
+def mark_current_trace_error(message: str) -> None:
+    record = _current_trace.get()
+    if record is not None:
+        record.status = "error"
+        record.error_message = message[:1000]

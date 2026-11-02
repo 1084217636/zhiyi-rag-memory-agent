@@ -9,11 +9,23 @@ from langchain_core.tools import BaseTool
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import app.core.agent.tools.builtin  # noqa: F401  触发内置工具注册
+from app.config import settings
 from app.core.agent.tools.base import BUILTIN_REGISTRY, ToolBuildContext
 from app.core.logging import get_logger
 from app.repositories.tool_config_repository import ToolConfigRepository
 
 logger = get_logger(__name__)
+
+
+def _allowed_external_tools(tools: list[BaseTool]) -> list[BaseTool]:
+    if not settings.agent_external_tools_enabled:
+        return []
+    allowlist = {
+        name.strip()
+        for name in settings.agent_external_tool_allowlist.split(",")
+        if name.strip()
+    }
+    return [tool for tool in tools if tool.name in allowlist]
 
 
 async def _enabled_map(session: AsyncSession, user_id: uuid.UUID) -> dict[str, bool]:
@@ -82,11 +94,14 @@ async def build_enabled_tools(
     tools = await _build_builtin_tools(
         session, user_id, citations, overrides, stats_holder, kb_ids
     )
-    # MCP 工具（⑥-B 接入，无状态版本）
+    # MCP is optional. A configured server alone cannot silently add a
+    # potentially mutating tool to an Agent's callable surface.
+    if not settings.agent_external_tools_enabled or not settings.agent_external_tool_allowlist.strip():
+        return tools
     try:
         from app.core.agent.tools.mcp.loader import build_mcp_tools
 
-        tools.extend(await build_mcp_tools(session, user_id))
+        tools.extend(_allowed_external_tools(await build_mcp_tools(session, user_id)))
     except ImportError:
         pass  # MCP 模块未就绪
     except Exception as e:
@@ -116,13 +131,16 @@ async def build_enabled_tools_cm(
     tools = await _build_builtin_tools(
         session, user_id, citations, overrides, stats_holder, kb_ids
     )
+    if not settings.agent_external_tools_enabled or not settings.agent_external_tool_allowlist.strip():
+        yield tools
+        return
     try:
         from app.core.agent.tools.mcp.loader import open_mcp_tools
     except ImportError:
         yield tools
         return
     async with open_mcp_tools(session, user_id) as mcp_tools:
-        yield [*tools, *mcp_tools]
+        yield [*tools, *_allowed_external_tools(mcp_tools)]
 
 
 async def list_tools_for_user(

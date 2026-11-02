@@ -1,4 +1,6 @@
 """记忆相关请求/响应 schema。"""
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -13,3 +15,7 @@ class MemorySearchRequest(BaseModel):
 
     query: str = Field(..., min_length=1, description="检索关键词")
     top_k: int = Field(default=10, ge=1, le=50)
+
+
+class MemoryResolutionRequest(BaseModel):
+    action: Literal["keep_both", "replace", "reject"]

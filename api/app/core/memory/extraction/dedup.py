@@ -22,6 +22,10 @@ _NAME_SIM_GATE = 0.80  # 候选对名称相似度门槛
 _MERGE_CONFIDENCE = 0.80  # LLM 合并置信度门槛
 
 
+def normalized_description(text: str) -> str:
+    return "".join(text.split()).casefold()
+
+
 def _text_sim(a: str, b: str) -> float:
     a, b = (a or "").strip().lower(), (b or "").strip().lower()
     if not a or not b:
@@ -85,15 +89,18 @@ async def dedup_within_batch(
     if len(entities) < 2:
         return entities, redirect
 
-    # 同名同类型直接合并（不必问 LLM）
+    # 同名同类型仍可能是不同对象；只有特殊主体或非空描述也一致时才直接合并。
     by_key: dict[tuple[str, str], EntityNode] = {}
     survivors: list[EntityNode] = []
     for ent in entities:
         key = (ent.name.strip().lower(), ent.type)
         if key in by_key:
             canon = by_key[key]
-            _merge_into(canon, ent)
-            redirect[ent.id] = canon.id
+            if ent.name == "用户" or (bool(ent.description.strip()) and normalized_description(canon.description) == normalized_description(ent.description)):
+                _merge_into(canon, ent)
+                redirect[ent.id] = canon.id
+            else:
+                survivors.append(ent)
         else:
             by_key[key] = ent
             survivors.append(ent)
@@ -152,7 +159,7 @@ async def merge_with_graph(
             (r for r in existing if (r.get("name") or "").strip().lower() == norm_name),
             None,
         )
-        if exact is not None:
+        if exact is not None and (ent.name == "用户" or (bool(ent.description.strip()) and normalized_description(exact.get("description") or "") == normalized_description(ent.description))):
             existing_node = EntityNode(
                 id=exact["id"], user_id=user_id, name=exact.get("name", ""),
                 type=ent.type, description=exact.get("description") or "",

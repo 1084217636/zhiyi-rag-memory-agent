@@ -21,6 +21,8 @@ MEMORY_STATUS_PENDING = "pending"
 MEMORY_STATUS_EXTRACTING = "extracting"
 MEMORY_STATUS_DONE = "done"
 MEMORY_STATUS_FAILED = "failed"
+MEMORY_STATUS_DELETING = "deleting"
+MEMORY_STATUS_DELETED = "deleted"
 
 
 class Memory(Base):

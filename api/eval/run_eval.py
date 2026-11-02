@@ -90,7 +90,14 @@ async def _run_fixtures(args, embed, chat, rerank) -> None:
     # 1. 写入(除非 --skip-setup)
     if not args.skip_setup:
         print("[setup] 写入评测语料与记忆…")
-        setup_stats = await setup_all(chat, embed)
+        if only == "retrieval":
+            from eval.pipeline.setup import ingest_corpus
+            setup_stats = {"docs": await ingest_corpus(embed), "dialogues": 0}
+        elif only == "memory":
+            from eval.pipeline.setup import ingest_memory
+            setup_stats = {"docs": 0, "dialogues": await ingest_memory(chat, embed)}
+        else:
+            setup_stats = await setup_all(chat, embed)
         print(f"[setup] 完成:{setup_stats}")
 
     # 2. 各评测
@@ -152,13 +159,13 @@ async def _run_benchmark(args, embed, chat, rerank) -> None:
 
 async def _run(args) -> None:
     embed = eval_config.embed_client()
-    chat = eval_config.chat_client()
+    chat = None if args.only == "retrieval" or args.benchmark == "cmteb-t2" else eval_config.chat_client()
     rerank = eval_config.rerank_client()
 
     # 0. 模型可用性自检(除非 --skip-check)
     if not args.skip_check:
         # cmteb-t2 不强需 chat;其他都要
-        need_chat = not (args.benchmark == "cmteb-t2")
+        need_chat = not (args.benchmark == "cmteb-t2" or args.only == "retrieval")
         rerank = await _check_models(embed, chat, rerank, need_chat=need_chat)
 
     try:

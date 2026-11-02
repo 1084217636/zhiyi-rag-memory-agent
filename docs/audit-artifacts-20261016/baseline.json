@@ -1,0 +1,1745 @@
+{
+  "scope": "fake-model/code-path probes; no real LLM, DB, Redis, ES or Neo4j",
+  "probes": {
+    "both_tools_in_successive_rounds": {
+      "tool_names": [
+        "knowledge_search",
+        "memory_search"
+      ],
+      "final": "combined answer"
+    },
+    "no_evidence_answer_gate": {
+      "unsupported_canary_passed": true,
+      "tool_status": "success",
+      "note": "Canary supplied by fake model; demonstrates missing server gate, not measured real-model hallucination rate"
+    },
+    "model_round_is_not_tool_count": {
+      "round_limit": 1,
+      "executed_tools": 6
+    },
+    "memory_statement_type_lost": {
+      "formatted": "- 用户（生命体）\n    · 事实：用户计划去北京",
+      "has_fact_prefix": true
+    },
+    "extraction_error_indistinguishable_from_empty": {
+      "result": []
+    },
+    "span_without_root": {
+      "is_noop": true
+    }
+  },
+  "historical_recomputed": {
+    "vector": {
+      "n": 22,
+      "recall@5": 1.0,
+      "mrr_top5": 0.9773,
+      "ndcg@5": 0.9861
+    },
+    "bm25": {
+      "n": 22,
+      "recall@5": 1.0,
+      "mrr_top5": 1.0,
+      "ndcg@5": 0.9944
+    },
+    "hybrid": {
+      "n": 22,
+      "recall@5": 1.0,
+      "mrr_top5": 1.0,
+      "ndcg@5": 0.9944
+    }
+  },
+  "historical_memory_bad_cases": [
+    {
+      "question": "用户是做什么工作的？",
+      "gold": [
+        "产品经理",
+        "用户"
+      ],
+      "retrieved_topk": [
+        "用户的工作",
+        "用户",
+        "用户就职的互联网公司",
+        "用户的项目",
+        "用户的父母"
+      ],
+      "hit": true,
+      "missed": [
+        "产品经理"
+      ],
+      "retrieved_raw_topk": [
+        "用户的工作",
+        "用户",
+        "用户就职的互联网公司",
+        "用户的项目",
+        "用户的父母"
+      ]
+    },
+    {
+      "question": "用户现在住在哪个城市？",
+      "gold": [
+        "上海",
+        "用户"
+      ],
+      "retrieved_topk": [
+        "用户的父母",
+        "用户",
+        "用户的工作",
+        "用户通勤",
+        "用户就职的互联网公司"
+      ],
+      "hit": true,
+      "missed": [
+        "上海"
+      ],
+      "retrieved_raw_topk": [
+        "用户的父母",
+        "用户",
+        "用户的工作",
+        "用户通勤",
+        "用户就职的互联网公司"
+      ]
+    },
+    {
+      "question": "用户养了什么宠物？",
+      "gold": [
+        "团子",
+        "用户"
+      ],
+      "retrieved_topk": [
+        "用户",
+        "养狗",
+        "用户的父母",
+        "用户的项目",
+        "狗"
+      ],
+      "hit": true,
+      "missed": [
+        "团子"
+      ],
+      "retrieved_raw_topk": [
+        "用户",
+        "养狗",
+        "用户的父母",
+        "用户的项目",
+        "狗"
+      ]
+    }
+  ],
+  "sha256": {
+    "api/eval/fixtures/corpus/giant-panda.md": "d7b19cf40d302257ad8e5a79f4393ee42ca2c8e4ed4889aa1e1e1fc0dab9cf74",
+    "api/eval/fixtures/corpus/great-wall.md": "4448f6779d1c7038135dc4af4847b83d9b7229fd72466a3f6e3d8168389aa194",
+    "api/eval/fixtures/corpus/marie-curie.md": "1269e7b3a233c82c333da1d692c3aec931cabf25723d94c8c8bc7703d7dd8ed8",
+    "api/eval/fixtures/corpus/mount-everest.md": "872fdc55258727db349c0a0769103aaedc9c58eb2873818daa0ba431a5c29f81",
+    "api/eval/fixtures/corpus/nobel-prize.md": "d7d75e0d1470f12660b8b4e3db257e81311d29a36abad44bc45648aa6d9250cf",
+    "api/eval/fixtures/corpus/penicillin.md": "dd8e8b8d65bf48c051b6257ad757d435f17c3603c157e60ba8ef0d298dea5570",
+    "api/eval/fixtures/corpus/photosynthesis.md": "62ef77b7bfd4469e0adeb02e7e4a4ab7c600bb7f0c98f6ccddbc225f4836b7ba",
+    "api/eval/fixtures/corpus/radium.md": "4a9a690d91873765578fef0c991abf77809d5250d5348b93807d5292eaeb3248",
+    "api/eval/fixtures/corpus/solar-system.md": "7357a8ab04d21cd92e7c46d3b8dc2d5a14aa0bb7915fd671a2e7445100a30c1c",
+    "api/eval/fixtures/corpus/yangtze-river.md": "ec11c146938bd6fa2fa01543fb05c7251e6409e198f7357f108ca9b3894892c0",
+    "api/eval/fixtures/dialogues.json": "86a0ce4c45541b269fa23dc07401fdce5d1f930703104391b103b93cf9c9b236",
+    "api/eval/fixtures/gold/dedup.json": "1c59da15b120446ef146b2e4d76ea94a0efe968d55ca1b97ecd8424afea8993d",
+    "api/eval/fixtures/gold/extraction.json": "29f16da7f92e2e6e788afba08232922010b0a94cfee3648f812f3b4e935f0fb2",
+    "api/eval/fixtures/gold/memory_retrieval.json": "57f0212e2403fa17d22c70d6cf31e4e6fd6a6182399cb14b45f078f60c3cd5da",
+    "api/eval/fixtures/gold/retrieval.json": "892816164289bdf2ab8c4f345ca96acd2f759525c2a64ac21a8185f8b864d576",
+    "api/eval/results/details-20260903-143301.json": "e3188a54e48a1cf00f8d561d4b992c82dc2eebf19a894ce159f6dc4729c58820",
+    "api/eval/results/retrieval-comparison-20260903-143301.json": "f3503489875612411426dbe5358b921d9e61f909f08504454406a0fda1913969",
+    "api/tests/test_active_recall_prompt.py": "9e89458e8c4536915dada57eba787d6735d7944eac7e170c3071f44d898dc64c",
+    "api/tests/test_agent_orchestrator.py": "b1cfdf01fd321422eeee23f5d000ae0ca761638016dd4a0c75ca6e593e8f2263",
+    "api/tests/test_llm_client_deepseek.py": "e533a152d0ac4d1324eef51c642c1e6eed86aecbe63154a7d0b0b7096f67268a",
+    "api/tests/test_memory_reliability.py": "ccdce2e33528816a1511aa114584d68440074bb184cce03e9b8bbd713f0537e6",
+    "api/app/core/agent/orchestrator.py": "e8c0830bc934233621643c9136ec85931ad2b16414a0b9cc7bc1be620f4acef5",
+    "api/app/core/rag/search.py": "f2a7805ce3a60b4682658d1bfd43dca411c1e363cd9d9bad84535407e42415f7"
+  },
+  "dependencies": {
+    "langchain": "1.3.2",
+    "langchain-core": "1.4.0",
+    "langchain-openai": "1.2.2",
+    "pydantic": "2.10.4",
+    "elasticsearch": "8.17.0",
+    "pytest": "9.1.1"
+  },
+  "historical_details_snapshot": {
+    "RAG 检索": [
+      {
+        "question": "居里夫人获得过几次诺贝尔奖？分别是什么领域？",
+        "gold": [
+          "marie-curie"
+        ],
+        "vector_topk": [
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "radium",
+          "mount-everest"
+        ],
+        "bm25_topk": [
+          "marie-curie",
+          "nobel-prize"
+        ],
+        "hybrid_topk": [
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "radium",
+          "mount-everest"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "钋和镭是谁发现的？什么时候发现的？",
+        "gold": [
+          "marie-curie",
+          "radium"
+        ],
+        "vector_topk": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "photosynthesis"
+        ],
+        "bm25_topk": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "yangtze-river",
+          "great-wall"
+        ],
+        "hybrid_topk": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "photosynthesis"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "镭的放射性有多强？",
+        "gold": [
+          "radium"
+        ],
+        "vector_topk": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "mount-everest",
+          "solar-system"
+        ],
+        "bm25_topk": [
+          "radium",
+          "marie-curie",
+          "solar-system",
+          "great-wall",
+          "giant-panda"
+        ],
+        "hybrid_topk": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "mount-everest",
+          "solar-system"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "镭曾经被用来做什么？为什么后来被禁止？",
+        "gold": [
+          "radium"
+        ],
+        "vector_topk": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "great-wall",
+          "photosynthesis"
+        ],
+        "bm25_topk": [
+          "radium",
+          "solar-system",
+          "great-wall",
+          "marie-curie",
+          "giant-panda"
+        ],
+        "hybrid_topk": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "great-wall"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "诺贝尔奖是怎么来的？最早有哪几个奖项？",
+        "gold": [
+          "nobel-prize"
+        ],
+        "vector_topk": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "yangtze-river"
+        ],
+        "bm25_topk": [
+          "nobel-prize",
+          "radium",
+          "marie-curie",
+          "great-wall",
+          "yangtze-river"
+        ],
+        "hybrid_topk": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "great-wall",
+          "radium"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "诺贝尔和平奖由哪个机构评选？",
+        "gold": [
+          "nobel-prize"
+        ],
+        "vector_topk": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "mount-everest"
+        ],
+        "bm25_topk": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "mount-everest",
+          "radium"
+        ],
+        "hybrid_topk": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "mount-everest"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "发现镭的科学家因为这个发现获得了什么奖？",
+        "gold": [
+          "marie-curie",
+          "nobel-prize"
+        ],
+        "vector_topk": [
+          "radium",
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "solar-system"
+        ],
+        "bm25_topk": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "solar-system"
+        ],
+        "hybrid_topk": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "solar-system"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "青霉素是谁发现的？怎么发现的？",
+        "gold": [
+          "penicillin"
+        ],
+        "vector_topk": [
+          "penicillin",
+          "radium",
+          "marie-curie",
+          "photosynthesis",
+          "nobel-prize"
+        ],
+        "bm25_topk": [
+          "penicillin",
+          "marie-curie",
+          "radium",
+          "yangtze-river",
+          "solar-system"
+        ],
+        "hybrid_topk": [
+          "penicillin",
+          "marie-curie",
+          "radium",
+          "photosynthesis",
+          "nobel-prize"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "弗莱明因为青霉素获得了哪一年的诺贝尔奖？",
+        "gold": [
+          "penicillin"
+        ],
+        "vector_topk": [
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "radium",
+          "photosynthesis"
+        ],
+        "bm25_topk": [
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "radium",
+          "solar-system"
+        ],
+        "hybrid_topk": [
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "radium",
+          "photosynthesis"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "长城是为了什么修建的？秦始皇做了什么？",
+        "gold": [
+          "great-wall"
+        ],
+        "vector_topk": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "penicillin",
+          "solar-system"
+        ],
+        "bm25_topk": [
+          "great-wall",
+          "radium",
+          "solar-system",
+          "marie-curie",
+          "giant-panda"
+        ],
+        "hybrid_topk": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "penicillin",
+          "solar-system"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "现存保存最好的长城是哪个朝代修的？",
+        "gold": [
+          "great-wall"
+        ],
+        "vector_topk": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "giant-panda"
+        ],
+        "bm25_topk": [
+          "great-wall",
+          "yangtze-river",
+          "solar-system",
+          "radium",
+          "marie-curie"
+        ],
+        "hybrid_topk": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "giant-panda"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "珠穆朗玛峰有多高？在哪两个国家交界？",
+        "gold": [
+          "mount-everest"
+        ],
+        "vector_topk": [
+          "mount-everest",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda",
+          "marie-curie"
+        ],
+        "bm25_topk": [
+          "mount-everest",
+          "giant-panda",
+          "yangtze-river",
+          "photosynthesis",
+          "marie-curie"
+        ],
+        "hybrid_topk": [
+          "mount-everest",
+          "giant-panda",
+          "yangtze-river",
+          "great-wall",
+          "marie-curie"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "谁第一个登顶珠穆朗玛峰？",
+        "gold": [
+          "mount-everest"
+        ],
+        "vector_topk": [
+          "mount-everest",
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "great-wall"
+        ],
+        "bm25_topk": [
+          "mount-everest"
+        ],
+        "hybrid_topk": [
+          "mount-everest",
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "great-wall"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "大熊猫主要吃什么？分布在哪里？",
+        "gold": [
+          "giant-panda"
+        ],
+        "vector_topk": [
+          "giant-panda",
+          "yangtze-river",
+          "solar-system",
+          "photosynthesis",
+          "mount-everest"
+        ],
+        "bm25_topk": [
+          "giant-panda",
+          "photosynthesis",
+          "yangtze-river",
+          "penicillin",
+          "mount-everest"
+        ],
+        "hybrid_topk": [
+          "giant-panda",
+          "photosynthesis",
+          "yangtze-river",
+          "solar-system",
+          "mount-everest"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "大熊猫的保护级别有什么变化？",
+        "gold": [
+          "giant-panda"
+        ],
+        "vector_topk": [
+          "giant-panda",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "nobel-prize"
+        ],
+        "bm25_topk": [
+          "giant-panda",
+          "yangtze-river",
+          "radium",
+          "solar-system",
+          "marie-curie"
+        ],
+        "hybrid_topk": [
+          "giant-panda",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "nobel-prize"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "光合作用把什么转化成什么？发生在植物的哪里？",
+        "gold": [
+          "photosynthesis"
+        ],
+        "vector_topk": [
+          "photosynthesis",
+          "penicillin",
+          "radium",
+          "marie-curie",
+          "solar-system"
+        ],
+        "bm25_topk": [
+          "photosynthesis",
+          "radium",
+          "solar-system",
+          "marie-curie",
+          "great-wall"
+        ],
+        "hybrid_topk": [
+          "photosynthesis",
+          "penicillin",
+          "radium",
+          "marie-curie",
+          "solar-system"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "为什么树叶是绿色的？",
+        "gold": [
+          "photosynthesis"
+        ],
+        "vector_topk": [
+          "photosynthesis",
+          "solar-system",
+          "yangtze-river",
+          "great-wall",
+          "marie-curie"
+        ],
+        "bm25_topk": [
+          "photosynthesis",
+          "yangtze-river",
+          "solar-system",
+          "radium",
+          "great-wall"
+        ],
+        "hybrid_topk": [
+          "photosynthesis",
+          "solar-system",
+          "yangtze-river",
+          "great-wall",
+          "marie-curie"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "太阳系八大行星按离太阳远近怎么排？",
+        "gold": [
+          "solar-system"
+        ],
+        "vector_topk": [
+          "solar-system",
+          "mount-everest",
+          "radium",
+          "nobel-prize",
+          "yangtze-river"
+        ],
+        "bm25_topk": [
+          "solar-system"
+        ],
+        "hybrid_topk": [
+          "solar-system",
+          "mount-everest",
+          "radium",
+          "nobel-prize",
+          "yangtze-river"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "太阳系最大的行星是哪个？冥王星为什么被除名？",
+        "gold": [
+          "solar-system"
+        ],
+        "vector_topk": [
+          "solar-system",
+          "nobel-prize",
+          "mount-everest",
+          "radium",
+          "yangtze-river"
+        ],
+        "bm25_topk": [
+          "solar-system",
+          "yangtze-river",
+          "great-wall",
+          "radium",
+          "giant-panda"
+        ],
+        "hybrid_topk": [
+          "solar-system",
+          "nobel-prize",
+          "radium",
+          "yangtze-river",
+          "mount-everest"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "长江发源于哪里？最后流入哪个海？",
+        "gold": [
+          "yangtze-river"
+        ],
+        "vector_topk": [
+          "yangtze-river",
+          "great-wall",
+          "solar-system",
+          "marie-curie",
+          "mount-everest"
+        ],
+        "bm25_topk": [
+          "yangtze-river"
+        ],
+        "hybrid_topk": [
+          "yangtze-river",
+          "great-wall",
+          "solar-system",
+          "marie-curie",
+          "mount-everest"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "三峡大坝有什么功能？",
+        "gold": [
+          "yangtze-river"
+        ],
+        "vector_topk": [
+          "yangtze-river",
+          "great-wall",
+          "photosynthesis",
+          "giant-panda",
+          "mount-everest"
+        ],
+        "bm25_topk": [
+          "yangtze-river"
+        ],
+        "hybrid_topk": [
+          "yangtze-river",
+          "great-wall",
+          "photosynthesis",
+          "giant-panda",
+          "mount-everest"
+        ],
+        "hybrid_hit": true
+      },
+      {
+        "question": "长江和珠穆朗玛峰分别和青藏高原有什么关系？",
+        "gold": [
+          "yangtze-river",
+          "mount-everest"
+        ],
+        "vector_topk": [
+          "yangtze-river",
+          "mount-everest",
+          "great-wall",
+          "solar-system",
+          "giant-panda"
+        ],
+        "bm25_topk": [
+          "yangtze-river",
+          "mount-everest",
+          "nobel-prize",
+          "photosynthesis",
+          "penicillin"
+        ],
+        "hybrid_topk": [
+          "yangtze-river",
+          "mount-everest",
+          "great-wall",
+          "solar-system",
+          "giant-panda"
+        ],
+        "hybrid_hit": true
+      }
+    ],
+    "记忆检索": [
+      {
+        "question": "用户是做什么工作的？",
+        "gold": [
+          "产品经理",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户的工作",
+          "用户",
+          "用户就职的互联网公司",
+          "用户的项目",
+          "用户的父母"
+        ],
+        "hit": true,
+        "missed": [
+          "产品经理"
+        ],
+        "retrieved_raw_topk": [
+          "用户的工作",
+          "用户",
+          "用户就职的互联网公司",
+          "用户的项目",
+          "用户的父母"
+        ]
+      },
+      {
+        "question": "用户现在住在哪个城市？",
+        "gold": [
+          "上海",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户的父母",
+          "用户",
+          "用户的工作",
+          "用户通勤",
+          "用户就职的互联网公司"
+        ],
+        "hit": true,
+        "missed": [
+          "上海"
+        ],
+        "retrieved_raw_topk": [
+          "用户的父母",
+          "用户",
+          "用户的工作",
+          "用户通勤",
+          "用户就职的互联网公司"
+        ]
+      },
+      {
+        "question": "用户住在上海哪个区？",
+        "gold": [
+          "徐汇区",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "上海",
+          "徐汇区",
+          "用户就职的互联网公司",
+          "用户",
+          "用户的父母"
+        ],
+        "hit": true,
+        "missed": [],
+        "retrieved_raw_topk": [
+          "上海",
+          "上海徐汇区",
+          "用户就职的互联网公司",
+          "用户",
+          "用户的父母"
+        ]
+      },
+      {
+        "question": "用户养了什么宠物？",
+        "gold": [
+          "团子",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "养狗",
+          "用户的父母",
+          "用户的项目",
+          "狗"
+        ],
+        "hit": true,
+        "missed": [
+          "团子"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "养狗",
+          "用户的父母",
+          "用户的项目",
+          "狗"
+        ]
+      },
+      {
+        "question": "用户的猫叫什么名字？",
+        "gold": [
+          "团子",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "用户的父母",
+          "用户的项目",
+          "用户的工作",
+          "用户通勤"
+        ],
+        "hit": true,
+        "missed": [
+          "团子"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "用户的父母",
+          "用户的项目",
+          "用户的工作",
+          "用户通勤"
+        ]
+      },
+      {
+        "question": "用户周末喜欢做什么？",
+        "gold": [
+          "爬山",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "用户的工作",
+          "用户通勤",
+          "用户的父母",
+          "用户就职的互联网公司"
+        ],
+        "hit": true,
+        "missed": [
+          "爬山"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "用户的工作",
+          "用户通勤",
+          "用户的父母",
+          "用户就职的互联网公司"
+        ]
+      },
+      {
+        "question": "用户在学什么外语？",
+        "gold": [
+          "日语",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "用户的工作",
+          "用户的项目",
+          "用户的父母",
+          "用户就职的互联网公司"
+        ],
+        "hit": true,
+        "missed": [
+          "日语"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "用户的工作",
+          "用户的项目",
+          "用户的父母",
+          "用户就职的互联网公司"
+        ]
+      },
+      {
+        "question": "用户去哪里旅行过？",
+        "gold": [
+          "京都",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "用户通勤",
+          "用户的父母",
+          "用户的工作",
+          "用户就职的互联网公司"
+        ],
+        "hit": true,
+        "missed": [
+          "京都"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "用户通勤",
+          "用户的父母",
+          "用户的工作",
+          "用户就职的互联网公司"
+        ]
+      },
+      {
+        "question": "用户用什么相机拍照？",
+        "gold": [
+          "索尼相机",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "索尼相机",
+          "拍照",
+          "索尼微单相机",
+          "用户",
+          "用户的父母"
+        ],
+        "hit": true,
+        "missed": [],
+        "retrieved_raw_topk": [
+          "相机",
+          "拍照",
+          "索尼微单相机",
+          "用户",
+          "用户的父母"
+        ]
+      },
+      {
+        "question": "用户用什么牌子的手机？",
+        "gold": [
+          "iPhone",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "iPhone",
+          "用户的父母",
+          "用户就职的互联网公司",
+          "用户的工作"
+        ],
+        "hit": true,
+        "missed": [],
+        "retrieved_raw_topk": [
+          "用户",
+          "iPhone",
+          "用户的父母",
+          "用户就职的互联网公司",
+          "用户的工作"
+        ]
+      },
+      {
+        "question": "用户喜欢喝什么咖啡？",
+        "gold": [
+          "拿铁",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "咖啡",
+          "拿铁",
+          "用户",
+          "用户的工作",
+          "用户的父母"
+        ],
+        "hit": true,
+        "missed": [],
+        "retrieved_raw_topk": [
+          "咖啡",
+          "咖啡",
+          "拿铁咖啡",
+          "用户",
+          "用户的工作"
+        ]
+      },
+      {
+        "question": "用户爱吃什么？",
+        "gold": [
+          "火锅",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "用户的工作",
+          "用户的父母",
+          "用户的项目",
+          "用户通勤"
+        ],
+        "hit": true,
+        "missed": [
+          "火锅"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "用户的工作",
+          "用户的父母",
+          "用户的项目",
+          "用户通勤"
+        ]
+      },
+      {
+        "question": "用户用什么工具记笔记？",
+        "gold": [
+          "Notion",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "用户的工作",
+          "用户的项目",
+          "用户通勤",
+          "用户的父母"
+        ],
+        "hit": true,
+        "missed": [
+          "Notion"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "用户的工作",
+          "用户的项目",
+          "用户通勤",
+          "用户的父母"
+        ]
+      },
+      {
+        "question": "用户最好的朋友是谁？",
+        "gold": [
+          "王磊",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "朋友",
+          "用户",
+          "用户的父母",
+          "用户的工作",
+          "用户的项目"
+        ],
+        "hit": true,
+        "missed": [
+          "王磊"
+        ],
+        "retrieved_raw_topk": [
+          "朋友",
+          "用户",
+          "用户的父母",
+          "用户的工作",
+          "用户的项目"
+        ]
+      },
+      {
+        "question": "用户的妹妹是谁？",
+        "gold": [
+          "林晓",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户的父母",
+          "用户",
+          "用户的项目",
+          "用户的工作",
+          "用户通勤"
+        ],
+        "hit": true,
+        "missed": [
+          "林晓"
+        ],
+        "retrieved_raw_topk": [
+          "用户的父母",
+          "用户",
+          "用户的项目",
+          "用户的工作",
+          "用户通勤"
+        ]
+      },
+      {
+        "question": "用户的妹妹住在哪里？",
+        "gold": [
+          "林晓",
+          "成都"
+        ],
+        "retrieved_topk": [
+          "用户的父母",
+          "用户",
+          "用户的项目",
+          "用户的工作",
+          "用户就职的互联网公司"
+        ],
+        "hit": false,
+        "missed": [
+          "林晓",
+          "成都"
+        ],
+        "retrieved_raw_topk": [
+          "用户的父母",
+          "用户",
+          "用户的项目",
+          "用户的工作",
+          "用户就职的互联网公司"
+        ]
+      },
+      {
+        "question": "用户在哪所大学读书？",
+        "gold": [
+          "复旦大学",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "复旦大学",
+          "用户的父母",
+          "用户就职的互联网公司",
+          "用户的工作"
+        ],
+        "hit": true,
+        "missed": [],
+        "retrieved_raw_topk": [
+          "用户",
+          "复旦大学",
+          "用户的父母",
+          "用户就职的互联网公司",
+          "用户的工作"
+        ]
+      },
+      {
+        "question": "用户的老家在哪？",
+        "gold": [
+          "成都",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户的父母",
+          "用户",
+          "用户的工作",
+          "用户的项目",
+          "用户就职的互联网公司"
+        ],
+        "hit": true,
+        "missed": [
+          "成都"
+        ],
+        "retrieved_raw_topk": [
+          "用户的父母",
+          "用户",
+          "用户的工作",
+          "用户的项目",
+          "用户就职的互联网公司"
+        ]
+      },
+      {
+        "question": "用户有没有摄影的爱好？",
+        "gold": [
+          "摄影",
+          "用户"
+        ],
+        "retrieved_topk": [
+          "用户",
+          "拍照",
+          "用户的工作",
+          "相机",
+          "用户的父母"
+        ],
+        "hit": true,
+        "missed": [
+          "摄影"
+        ],
+        "retrieved_raw_topk": [
+          "用户",
+          "拍照",
+          "用户的工作",
+          "相机",
+          "用户的父母"
+        ]
+      }
+    ],
+    "三元组抽取": [
+      {
+        "dialogue": "我是个产品经理，在上海一家互联网公司上班，平时项目挺忙的。",
+        "gold_entities": [
+          "上海",
+          "产品经理",
+          "用户"
+        ],
+        "pred_entities": [
+          "上海",
+          "产品经理",
+          "用户",
+          "用户就职的互联网公司"
+        ],
+        "entity_missed": [],
+        "entity_extra": [
+          "用户就职的互联网公司"
+        ],
+        "gold_triples": [
+          "用户|位于|上海",
+          "用户|属于类型|产品经理"
+        ],
+        "pred_triples": [
+          "用户|位于|上海",
+          "用户|属于类型|产品经理",
+          "用户|属于类型|用户就职的互联网公司"
+        ],
+        "triple_missed": [],
+        "triple_extra": [
+          "用户|属于类型|用户就职的互联网公司"
+        ]
+      },
+      {
+        "dialogue": "我现在住在上海徐汇区，平时坐地铁通勤，单程差不多要一个小时。",
+        "gold_entities": [
+          "徐汇区",
+          "用户"
+        ],
+        "pred_entities": [
+          "上海徐汇区",
+          "地铁",
+          "用户"
+        ],
+        "entity_missed": [
+          "徐汇区"
+        ],
+        "entity_extra": [
+          "上海徐汇区",
+          "地铁"
+        ],
+        "gold_triples": [
+          "用户|位于|徐汇区"
+        ],
+        "pred_triples": [
+          "用户|位于|上海徐汇区",
+          "用户|使用|地铁"
+        ],
+        "triple_missed": [
+          "用户|位于|徐汇区"
+        ],
+        "triple_extra": [
+          "用户|位于|上海徐汇区",
+          "用户|使用|地铁"
+        ]
+      },
+      {
+        "dialogue": "我养了一只布偶猫，叫团子，特别黏人，每天回家它都在门口等我。",
+        "gold_entities": [
+          "团子",
+          "用户"
+        ],
+        "pred_entities": [
+          "团子",
+          "布偶猫",
+          "用户"
+        ],
+        "entity_missed": [],
+        "entity_extra": [
+          "布偶猫"
+        ],
+        "gold_triples": [
+          "用户|拥有|团子"
+        ],
+        "pred_triples": [
+          "团子|属于类型|布偶猫",
+          "用户|拥有|团子",
+          "用户|拥有|布偶猫"
+        ],
+        "triple_missed": [],
+        "triple_extra": [
+          "团子|属于类型|布偶猫",
+          "用户|拥有|布偶猫"
+        ]
+      },
+      {
+        "dialogue": "周末我喜欢去爬山，还会带上相机拍照，我用的是索尼的微单。",
+        "gold_entities": [
+          "爬山",
+          "用户",
+          "索尼相机"
+        ],
+        "pred_entities": [
+          "爬山",
+          "用户",
+          "相机",
+          "索尼微单"
+        ],
+        "entity_missed": [
+          "索尼相机"
+        ],
+        "entity_extra": [
+          "相机",
+          "索尼微单"
+        ],
+        "gold_triples": [
+          "用户|使用|索尼相机",
+          "用户|偏好|爬山"
+        ],
+        "pred_triples": [
+          "用户|使用|相机",
+          "用户|使用|索尼微单",
+          "用户|偏好|爬山"
+        ],
+        "triple_missed": [
+          "用户|使用|索尼相机"
+        ],
+        "triple_extra": [
+          "用户|使用|相机",
+          "用户|使用|索尼微单"
+        ]
+      },
+      {
+        "dialogue": "我最近在学日语，打算明年考 N2，每天通勤路上背单词。",
+        "gold_entities": [
+          "日语",
+          "用户"
+        ],
+        "pred_entities": [
+          "N2",
+          "日语",
+          "日语N2",
+          "用户"
+        ],
+        "entity_missed": [],
+        "entity_extra": [
+          "N2",
+          "日语N2"
+        ],
+        "gold_triples": [
+          "用户|了解|日语"
+        ],
+        "pred_triples": [
+          "用户|了解|日语",
+          "用户|偏好|N2",
+          "用户|偏好|日语N2"
+        ],
+        "triple_missed": [],
+        "triple_extra": [
+          "用户|偏好|N2",
+          "用户|偏好|日语N2"
+        ]
+      },
+      {
+        "dialogue": "去年我去日本京都旅行了一趟，特别喜欢那边的氛围。",
+        "gold_entities": [
+          "京都",
+          "用户"
+        ],
+        "pred_entities": [
+          "日本京都",
+          "用户"
+        ],
+        "entity_missed": [
+          "京都"
+        ],
+        "entity_extra": [
+          "日本京都"
+        ],
+        "gold_triples": [
+          "用户|前往|京都"
+        ],
+        "pred_triples": [
+          "用户|偏好|日本京都",
+          "用户|前往|日本京都"
+        ],
+        "triple_missed": [
+          "用户|前往|京都"
+        ],
+        "triple_extra": [
+          "用户|偏好|日本京都",
+          "用户|前往|日本京都"
+        ]
+      },
+      {
+        "dialogue": "我手机一直用 iPhone，平时爱喝咖啡，最喜欢拿铁，几乎每天一杯。",
+        "gold_entities": [
+          "iPhone",
+          "拿铁",
+          "用户"
+        ],
+        "pred_entities": [
+          "iPhone",
+          "咖啡",
+          "拿铁咖啡",
+          "用户"
+        ],
+        "entity_missed": [
+          "拿铁"
+        ],
+        "entity_extra": [
+          "咖啡",
+          "拿铁咖啡"
+        ],
+        "gold_triples": [
+          "用户|使用|iPhone",
+          "用户|偏好|拿铁"
+        ],
+        "pred_triples": [
+          "用户|使用|iPhone",
+          "用户|偏好|咖啡",
+          "用户|偏好|拿铁咖啡"
+        ],
+        "triple_missed": [
+          "用户|偏好|拿铁"
+        ],
+        "triple_extra": [
+          "用户|偏好|咖啡",
+          "用户|偏好|拿铁咖啡"
+        ]
+      },
+      {
+        "dialogue": "我是成都人嘛，特别爱吃火锅，在上海也经常约朋友去吃。",
+        "gold_entities": [
+          "火锅",
+          "用户"
+        ],
+        "pred_entities": [
+          "上海",
+          "成都",
+          "朋友",
+          "火锅",
+          "用户"
+        ],
+        "entity_missed": [],
+        "entity_extra": [
+          "上海",
+          "成都",
+          "朋友"
+        ],
+        "gold_triples": [
+          "用户|偏好|火锅"
+        ],
+        "pred_triples": [
+          "用户|位于|上海",
+          "用户|位于|成都",
+          "用户|偏好|火锅",
+          "用户|沟通于|朋友"
+        ],
+        "triple_missed": [],
+        "triple_extra": [
+          "用户|位于|上海",
+          "用户|位于|成都",
+          "用户|沟通于|朋友"
+        ]
+      },
+      {
+        "dialogue": "我习惯用 Notion 来记笔记和安排日程，工作生活都靠它。",
+        "gold_entities": [
+          "Notion",
+          "用户"
+        ],
+        "pred_entities": [
+          "Notion",
+          "用户"
+        ],
+        "entity_missed": [],
+        "entity_extra": [],
+        "gold_triples": [
+          "用户|使用|Notion"
+        ],
+        "pred_triples": [
+          "用户|使用|Notion"
+        ],
+        "triple_missed": [],
+        "triple_extra": []
+      },
+      {
+        "dialogue": "我妹妹叫林晓，她还留在成都工作，我们经常视频聊天。",
+        "gold_entities": [
+          "成都",
+          "林晓",
+          "用户"
+        ],
+        "pred_entities": [
+          "成都",
+          "林晓",
+          "用户"
+        ],
+        "entity_missed": [],
+        "entity_extra": [],
+        "gold_triples": [
+          "林晓|位于|成都",
+          "用户|关联于|林晓"
+        ],
+        "pred_triples": [
+          "林晓|位于|成都",
+          "林晓|属于类型|用户",
+          "用户|拥有|林晓",
+          "用户|沟通于|林晓"
+        ],
+        "triple_missed": [
+          "用户|关联于|林晓"
+        ],
+        "triple_extra": [
+          "林晓|属于类型|用户",
+          "用户|拥有|林晓",
+          "用户|沟通于|林晓"
+        ]
+      }
+    ],
+    "实体去重": [
+      {
+        "mentions": [
+          "用户",
+          "我",
+          "本人",
+          "团子",
+          "我家团子",
+          "上海",
+          "魔都",
+          "林晓",
+          "我妹妹林晓"
+        ],
+        "gold_clusters": [
+          [
+            "用户",
+            "我",
+            "本人"
+          ],
+          [
+            "团子",
+            "我家团子"
+          ],
+          [
+            "上海",
+            "魔都"
+          ],
+          [
+            "林晓",
+            "我妹妹林晓"
+          ]
+        ],
+        "pred_clusters": [
+          [
+            "用户"
+          ],
+          [
+            "我",
+            "本人"
+          ],
+          [
+            "团子"
+          ],
+          [
+            "我家团子"
+          ],
+          [
+            "上海"
+          ],
+          [
+            "魔都"
+          ],
+          [
+            "林晓"
+          ],
+          [
+            "我妹妹林晓"
+          ]
+        ],
+        "pairwise": {
+          "P": 1.0,
+          "R": 0.1667,
+          "F1": 0.2857
+        }
+      },
+      {
+        "mentions": [
+          "复旦大学",
+          "复旦",
+          "iPhone",
+          "苹果手机",
+          "日语",
+          "日本语",
+          "索尼相机",
+          "Sony相机",
+          "成都"
+        ],
+        "gold_clusters": [
+          [
+            "复旦大学",
+            "复旦"
+          ],
+          [
+            "iPhone",
+            "苹果手机"
+          ],
+          [
+            "日语",
+            "日本语"
+          ],
+          [
+            "索尼相机",
+            "Sony相机"
+          ],
+          [
+            "成都"
+          ]
+        ],
+        "pred_clusters": [
+          [
+            "复旦大学",
+            "复旦"
+          ],
+          [
+            "iPhone",
+            "苹果手机"
+          ],
+          [
+            "日语",
+            "日本语"
+          ],
+          [
+            "索尼相机"
+          ],
+          [
+            "Sony相机"
+          ],
+          [
+            "成都"
+          ]
+        ],
+        "pairwise": {
+          "P": 1.0,
+          "R": 0.75,
+          "F1": 0.8571
+        }
+      },
+      {
+        "mentions": [
+          "京都",
+          "日本京都",
+          "王磊",
+          "我朋友王磊",
+          "Notion",
+          "火锅",
+          "徐汇区"
+        ],
+        "gold_clusters": [
+          [
+            "京都",
+            "日本京都"
+          ],
+          [
+            "王磊",
+            "我朋友王磊"
+          ],
+          [
+            "Notion"
+          ],
+          [
+            "火锅"
+          ],
+          [
+            "徐汇区"
+          ]
+        ],
+        "pred_clusters": [
+          [
+            "京都",
+            "日本京都"
+          ],
+          [
+            "王磊"
+          ],
+          [
+            "我朋友王磊"
+          ],
+          [
+            "Notion"
+          ],
+          [
+            "火锅"
+          ],
+          [
+            "徐汇区"
+          ]
+        ],
+        "pairwise": {
+          "P": 1.0,
+          "R": 0.5,
+          "F1": 0.6667
+        }
+      }
+    ]
+  },
+  "audit_date": "2026-10-16",
+  "base_commit": "08f167f; audited working tree includes pre-existing modifications",
+  "verification": {
+    "pytest": "17 passed in 1.63s; api/.venv/bin/python -m pytest -q -p no:cacheprovider",
+    "import": "app.main import OK; lifespan not started",
+    "external_services": "not exercised",
+    "baseline_kind": "current unit tests + fake-model probes + recomputed preserved historical rankings; no new live evaluation"
+  }
+}

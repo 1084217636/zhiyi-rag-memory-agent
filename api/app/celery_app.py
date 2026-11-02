@@ -22,4 +22,11 @@ celery_app.conf.update(
         "app.tasks.parse.*": {"queue": "parse"},
         "app.tasks.memory.*": {"queue": "memory"},
     },
+    beat_schedule={
+        "requeue-committed-pending-memories": {
+            "task": "app.tasks.memory.requeue_pending",
+            "schedule": 60.0,
+            "options": {"queue": "memory"},
+        },
+    },
 )

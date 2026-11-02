@@ -1,0 +1,8 @@
+{
+  "scope": "isolated PostgreSQL; fake token usage, not a paid usage measurement",
+  "trace_persisted": true,
+  "spans": 2,
+  "input_tokens": 100,
+  "output_tokens": 20,
+  "status": "ok"
+}

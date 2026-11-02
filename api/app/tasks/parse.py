@@ -13,7 +13,8 @@ import app.models  # noqa: F401  确保所有 ORM 模型注册到 metadata
 from app.celery_app import celery_app
 from app.core.llm.resolver import get_client_for_type, get_optional_client_for_type
 from app.core.logging import get_logger
-from app.core.rag.chunker import chunk_parent_child
+from app.core.rag.chunker import ChunkConfig, chunk_parent_child
+from app.config import settings
 from app.core.rag.classifier import classify_content
 from app.core.rag.es_index import CHUNK_TYPE_CHILD, CHUNK_TYPE_PARENT
 from app.core.rag.es_store import (
@@ -25,6 +26,7 @@ from app.core.rag.es_store import (
 from app.core.rag.parser import parse_document
 from app.core.storage import get_storage
 from app.db import elastic
+from app.core.llm.client import close_llm_client
 from app.db.postgres import create_task_engine
 from app.models.document_model import (
     DOC_STATUS_DONE,
@@ -48,6 +50,7 @@ async def _run(document_id: str) -> None:
         await engine.dispose()
         # 关闭本任务事件循环内创建的 ES 客户端
         await elastic.close()
+        await close_llm_client()
 
 
 async def _parse(session: AsyncSession, document_id: str, doc_uuid: uuid.UUID) -> None:
@@ -72,7 +75,14 @@ async def _parse(session: AsyncSession, document_id: str, doc_uuid: uuid.UUID) -
         await repo.save(doc)
 
         # 3. 父子分块
-        parents = chunk_parent_child(text)
+        chunk_config = ChunkConfig(
+            parent_tokens=settings.rag_parent_chunk_tokens,
+            child_tokens=settings.rag_child_chunk_tokens,
+            overlap_tokens=settings.rag_child_overlap_tokens,
+        )
+        chunk_policy = (f"section_sentence:p{chunk_config.parent_tokens}:"
+                        f"c{chunk_config.child_tokens}:o{chunk_config.overlap_tokens}")
+        parents = chunk_parent_child(text, chunk_config)
         if not parents:
             raise ValueError("分块结果为空")
 
@@ -92,6 +102,7 @@ async def _parse(session: AsyncSession, document_id: str, doc_uuid: uuid.UUID) -
                 content=parent.content,
                 vector=None,
                 kb_id=kb_id,
+                chunk_policy=chunk_policy,
             )
             parent_chunk_id = parent_doc["_id"]
             es_docs.append(parent_doc)
@@ -110,6 +121,7 @@ async def _parse(session: AsyncSession, document_id: str, doc_uuid: uuid.UUID) -
                             vector=vec,
                             parent_id=parent_chunk_id,
                             kb_id=kb_id,
+                            chunk_policy=chunk_policy,
                         )
                     )
                     chunk_total += 1

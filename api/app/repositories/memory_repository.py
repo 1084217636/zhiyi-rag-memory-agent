@@ -4,7 +4,7 @@ import uuid
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.memory_model import Memory
+from app.models.memory_model import Memory, MEMORY_STATUS_DELETED, MEMORY_STATUS_DELETING
 
 
 class MemoryRepository:
@@ -31,7 +31,10 @@ class MemoryRepository:
     async def list_by_user(
         self, user_id: uuid.UUID, page: int, page_size: int
     ) -> tuple[list[Memory], int]:
-        base = select(Memory).where(Memory.user_id == user_id)
+        base = select(Memory).where(
+            Memory.user_id == user_id,
+            Memory.status.notin_([MEMORY_STATUS_DELETED, MEMORY_STATUS_DELETING]),
+        )
         total = await self.session.scalar(
             select(func.count()).select_from(base.subquery())
         )

@@ -1,0 +1,812 @@
+[
+  {
+    "question": "居里夫人获得过几次诺贝尔奖？分别是什么领域？",
+    "relevant_doc_ids": [
+      "marie-curie"
+    ],
+    "case_id": "retrieval-01-1",
+    "query_group": "retrieval-01"
+  },
+  {
+    "question": "请根据我上传的资料回答：居里夫人获得过几次诺贝尔奖？分别是什么领域？",
+    "relevant_doc_ids": [
+      "marie-curie"
+    ],
+    "case_id": "retrieval-01-2",
+    "query_group": "retrieval-01"
+  },
+  {
+    "question": "资料里有没有说明：居里夫人获得过几次诺贝尔奖？分别是什么领域？",
+    "relevant_doc_ids": [
+      "marie-curie"
+    ],
+    "case_id": "retrieval-01-3",
+    "query_group": "retrieval-01"
+  },
+  {
+    "question": "我想核对文档中的信息，居里夫人获得过几次诺贝尔奖？分别是什么领域？",
+    "relevant_doc_ids": [
+      "marie-curie"
+    ],
+    "case_id": "retrieval-01-4",
+    "query_group": "retrieval-01"
+  },
+  {
+    "question": "从知识库内容看，居里夫人获得过几次诺贝尔奖？分别是什么领域？",
+    "relevant_doc_ids": [
+      "marie-curie"
+    ],
+    "case_id": "retrieval-01-5",
+    "query_group": "retrieval-01"
+  },
+  {
+    "question": "钋和镭是谁发现的？什么时候发现的？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "radium"
+    ],
+    "case_id": "retrieval-02-1",
+    "query_group": "retrieval-02"
+  },
+  {
+    "question": "请根据我上传的资料回答：钋和镭是谁发现的？什么时候发现的？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "radium"
+    ],
+    "case_id": "retrieval-02-2",
+    "query_group": "retrieval-02"
+  },
+  {
+    "question": "资料里有没有说明：钋和镭是谁发现的？什么时候发现的？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "radium"
+    ],
+    "case_id": "retrieval-02-3",
+    "query_group": "retrieval-02"
+  },
+  {
+    "question": "我想核对文档中的信息，钋和镭是谁发现的？什么时候发现的？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "radium"
+    ],
+    "case_id": "retrieval-02-4",
+    "query_group": "retrieval-02"
+  },
+  {
+    "question": "从知识库内容看，钋和镭是谁发现的？什么时候发现的？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "radium"
+    ],
+    "case_id": "retrieval-02-5",
+    "query_group": "retrieval-02"
+  },
+  {
+    "question": "镭的放射性有多强？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-03-1",
+    "query_group": "retrieval-03"
+  },
+  {
+    "question": "请根据我上传的资料回答：镭的放射性有多强？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-03-2",
+    "query_group": "retrieval-03"
+  },
+  {
+    "question": "资料里有没有说明：镭的放射性有多强？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-03-3",
+    "query_group": "retrieval-03"
+  },
+  {
+    "question": "我想核对文档中的信息，镭的放射性有多强？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-03-4",
+    "query_group": "retrieval-03"
+  },
+  {
+    "question": "从知识库内容看，镭的放射性有多强？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-03-5",
+    "query_group": "retrieval-03"
+  },
+  {
+    "question": "镭曾经被用来做什么？为什么后来被禁止？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-04-1",
+    "query_group": "retrieval-04"
+  },
+  {
+    "question": "请根据我上传的资料回答：镭曾经被用来做什么？为什么后来被禁止？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-04-2",
+    "query_group": "retrieval-04"
+  },
+  {
+    "question": "资料里有没有说明：镭曾经被用来做什么？为什么后来被禁止？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-04-3",
+    "query_group": "retrieval-04"
+  },
+  {
+    "question": "我想核对文档中的信息，镭曾经被用来做什么？为什么后来被禁止？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-04-4",
+    "query_group": "retrieval-04"
+  },
+  {
+    "question": "从知识库内容看，镭曾经被用来做什么？为什么后来被禁止？",
+    "relevant_doc_ids": [
+      "radium"
+    ],
+    "case_id": "retrieval-04-5",
+    "query_group": "retrieval-04"
+  },
+  {
+    "question": "诺贝尔奖是怎么来的？最早有哪几个奖项？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-05-1",
+    "query_group": "retrieval-05"
+  },
+  {
+    "question": "请根据我上传的资料回答：诺贝尔奖是怎么来的？最早有哪几个奖项？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-05-2",
+    "query_group": "retrieval-05"
+  },
+  {
+    "question": "资料里有没有说明：诺贝尔奖是怎么来的？最早有哪几个奖项？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-05-3",
+    "query_group": "retrieval-05"
+  },
+  {
+    "question": "我想核对文档中的信息，诺贝尔奖是怎么来的？最早有哪几个奖项？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-05-4",
+    "query_group": "retrieval-05"
+  },
+  {
+    "question": "从知识库内容看，诺贝尔奖是怎么来的？最早有哪几个奖项？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-05-5",
+    "query_group": "retrieval-05"
+  },
+  {
+    "question": "诺贝尔和平奖由哪个机构评选？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-06-1",
+    "query_group": "retrieval-06"
+  },
+  {
+    "question": "请根据我上传的资料回答：诺贝尔和平奖由哪个机构评选？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-06-2",
+    "query_group": "retrieval-06"
+  },
+  {
+    "question": "资料里有没有说明：诺贝尔和平奖由哪个机构评选？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-06-3",
+    "query_group": "retrieval-06"
+  },
+  {
+    "question": "我想核对文档中的信息，诺贝尔和平奖由哪个机构评选？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-06-4",
+    "query_group": "retrieval-06"
+  },
+  {
+    "question": "从知识库内容看，诺贝尔和平奖由哪个机构评选？",
+    "relevant_doc_ids": [
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-06-5",
+    "query_group": "retrieval-06"
+  },
+  {
+    "question": "发现镭的科学家因为这个发现获得了什么奖？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-07-1",
+    "query_group": "retrieval-07"
+  },
+  {
+    "question": "请根据我上传的资料回答：发现镭的科学家因为这个发现获得了什么奖？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-07-2",
+    "query_group": "retrieval-07"
+  },
+  {
+    "question": "资料里有没有说明：发现镭的科学家因为这个发现获得了什么奖？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-07-3",
+    "query_group": "retrieval-07"
+  },
+  {
+    "question": "我想核对文档中的信息，发现镭的科学家因为这个发现获得了什么奖？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-07-4",
+    "query_group": "retrieval-07"
+  },
+  {
+    "question": "从知识库内容看，发现镭的科学家因为这个发现获得了什么奖？",
+    "relevant_doc_ids": [
+      "marie-curie",
+      "nobel-prize"
+    ],
+    "case_id": "retrieval-07-5",
+    "query_group": "retrieval-07"
+  },
+  {
+    "question": "青霉素是谁发现的？怎么发现的？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-08-1",
+    "query_group": "retrieval-08"
+  },
+  {
+    "question": "请根据我上传的资料回答：青霉素是谁发现的？怎么发现的？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-08-2",
+    "query_group": "retrieval-08"
+  },
+  {
+    "question": "资料里有没有说明：青霉素是谁发现的？怎么发现的？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-08-3",
+    "query_group": "retrieval-08"
+  },
+  {
+    "question": "我想核对文档中的信息，青霉素是谁发现的？怎么发现的？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-08-4",
+    "query_group": "retrieval-08"
+  },
+  {
+    "question": "从知识库内容看，青霉素是谁发现的？怎么发现的？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-08-5",
+    "query_group": "retrieval-08"
+  },
+  {
+    "question": "弗莱明因为青霉素获得了哪一年的诺贝尔奖？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-09-1",
+    "query_group": "retrieval-09"
+  },
+  {
+    "question": "请根据我上传的资料回答：弗莱明因为青霉素获得了哪一年的诺贝尔奖？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-09-2",
+    "query_group": "retrieval-09"
+  },
+  {
+    "question": "资料里有没有说明：弗莱明因为青霉素获得了哪一年的诺贝尔奖？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-09-3",
+    "query_group": "retrieval-09"
+  },
+  {
+    "question": "我想核对文档中的信息，弗莱明因为青霉素获得了哪一年的诺贝尔奖？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-09-4",
+    "query_group": "retrieval-09"
+  },
+  {
+    "question": "从知识库内容看，弗莱明因为青霉素获得了哪一年的诺贝尔奖？",
+    "relevant_doc_ids": [
+      "penicillin"
+    ],
+    "case_id": "retrieval-09-5",
+    "query_group": "retrieval-09"
+  },
+  {
+    "question": "长城是为了什么修建的？秦始皇做了什么？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-10-1",
+    "query_group": "retrieval-10"
+  },
+  {
+    "question": "请根据我上传的资料回答：长城是为了什么修建的？秦始皇做了什么？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-10-2",
+    "query_group": "retrieval-10"
+  },
+  {
+    "question": "资料里有没有说明：长城是为了什么修建的？秦始皇做了什么？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-10-3",
+    "query_group": "retrieval-10"
+  },
+  {
+    "question": "我想核对文档中的信息，长城是为了什么修建的？秦始皇做了什么？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-10-4",
+    "query_group": "retrieval-10"
+  },
+  {
+    "question": "从知识库内容看，长城是为了什么修建的？秦始皇做了什么？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-10-5",
+    "query_group": "retrieval-10"
+  },
+  {
+    "question": "现存保存最好的长城是哪个朝代修的？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-11-1",
+    "query_group": "retrieval-11"
+  },
+  {
+    "question": "请根据我上传的资料回答：现存保存最好的长城是哪个朝代修的？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-11-2",
+    "query_group": "retrieval-11"
+  },
+  {
+    "question": "资料里有没有说明：现存保存最好的长城是哪个朝代修的？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-11-3",
+    "query_group": "retrieval-11"
+  },
+  {
+    "question": "我想核对文档中的信息，现存保存最好的长城是哪个朝代修的？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-11-4",
+    "query_group": "retrieval-11"
+  },
+  {
+    "question": "从知识库内容看，现存保存最好的长城是哪个朝代修的？",
+    "relevant_doc_ids": [
+      "great-wall"
+    ],
+    "case_id": "retrieval-11-5",
+    "query_group": "retrieval-11"
+  },
+  {
+    "question": "珠穆朗玛峰有多高？在哪两个国家交界？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-12-1",
+    "query_group": "retrieval-12"
+  },
+  {
+    "question": "请根据我上传的资料回答：珠穆朗玛峰有多高？在哪两个国家交界？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-12-2",
+    "query_group": "retrieval-12"
+  },
+  {
+    "question": "资料里有没有说明：珠穆朗玛峰有多高？在哪两个国家交界？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-12-3",
+    "query_group": "retrieval-12"
+  },
+  {
+    "question": "我想核对文档中的信息，珠穆朗玛峰有多高？在哪两个国家交界？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-12-4",
+    "query_group": "retrieval-12"
+  },
+  {
+    "question": "从知识库内容看，珠穆朗玛峰有多高？在哪两个国家交界？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-12-5",
+    "query_group": "retrieval-12"
+  },
+  {
+    "question": "谁第一个登顶珠穆朗玛峰？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-13-1",
+    "query_group": "retrieval-13"
+  },
+  {
+    "question": "请根据我上传的资料回答：谁第一个登顶珠穆朗玛峰？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-13-2",
+    "query_group": "retrieval-13"
+  },
+  {
+    "question": "资料里有没有说明：谁第一个登顶珠穆朗玛峰？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-13-3",
+    "query_group": "retrieval-13"
+  },
+  {
+    "question": "我想核对文档中的信息，谁第一个登顶珠穆朗玛峰？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-13-4",
+    "query_group": "retrieval-13"
+  },
+  {
+    "question": "从知识库内容看，谁第一个登顶珠穆朗玛峰？",
+    "relevant_doc_ids": [
+      "mount-everest"
+    ],
+    "case_id": "retrieval-13-5",
+    "query_group": "retrieval-13"
+  },
+  {
+    "question": "大熊猫主要吃什么？分布在哪里？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-14-1",
+    "query_group": "retrieval-14"
+  },
+  {
+    "question": "请根据我上传的资料回答：大熊猫主要吃什么？分布在哪里？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-14-2",
+    "query_group": "retrieval-14"
+  },
+  {
+    "question": "资料里有没有说明：大熊猫主要吃什么？分布在哪里？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-14-3",
+    "query_group": "retrieval-14"
+  },
+  {
+    "question": "我想核对文档中的信息，大熊猫主要吃什么？分布在哪里？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-14-4",
+    "query_group": "retrieval-14"
+  },
+  {
+    "question": "从知识库内容看，大熊猫主要吃什么？分布在哪里？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-14-5",
+    "query_group": "retrieval-14"
+  },
+  {
+    "question": "大熊猫的保护级别有什么变化？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-15-1",
+    "query_group": "retrieval-15"
+  },
+  {
+    "question": "请根据我上传的资料回答：大熊猫的保护级别有什么变化？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-15-2",
+    "query_group": "retrieval-15"
+  },
+  {
+    "question": "资料里有没有说明：大熊猫的保护级别有什么变化？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-15-3",
+    "query_group": "retrieval-15"
+  },
+  {
+    "question": "我想核对文档中的信息，大熊猫的保护级别有什么变化？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-15-4",
+    "query_group": "retrieval-15"
+  },
+  {
+    "question": "从知识库内容看，大熊猫的保护级别有什么变化？",
+    "relevant_doc_ids": [
+      "giant-panda"
+    ],
+    "case_id": "retrieval-15-5",
+    "query_group": "retrieval-15"
+  },
+  {
+    "question": "光合作用把什么转化成什么？发生在植物的哪里？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-16-1",
+    "query_group": "retrieval-16"
+  },
+  {
+    "question": "请根据我上传的资料回答：光合作用把什么转化成什么？发生在植物的哪里？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-16-2",
+    "query_group": "retrieval-16"
+  },
+  {
+    "question": "资料里有没有说明：光合作用把什么转化成什么？发生在植物的哪里？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-16-3",
+    "query_group": "retrieval-16"
+  },
+  {
+    "question": "我想核对文档中的信息，光合作用把什么转化成什么？发生在植物的哪里？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-16-4",
+    "query_group": "retrieval-16"
+  },
+  {
+    "question": "从知识库内容看，光合作用把什么转化成什么？发生在植物的哪里？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-16-5",
+    "query_group": "retrieval-16"
+  },
+  {
+    "question": "为什么树叶是绿色的？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-17-1",
+    "query_group": "retrieval-17"
+  },
+  {
+    "question": "请根据我上传的资料回答：为什么树叶是绿色的？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-17-2",
+    "query_group": "retrieval-17"
+  },
+  {
+    "question": "资料里有没有说明：为什么树叶是绿色的？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-17-3",
+    "query_group": "retrieval-17"
+  },
+  {
+    "question": "我想核对文档中的信息，为什么树叶是绿色的？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-17-4",
+    "query_group": "retrieval-17"
+  },
+  {
+    "question": "从知识库内容看，为什么树叶是绿色的？",
+    "relevant_doc_ids": [
+      "photosynthesis"
+    ],
+    "case_id": "retrieval-17-5",
+    "query_group": "retrieval-17"
+  },
+  {
+    "question": "太阳系八大行星按离太阳远近怎么排？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-18-1",
+    "query_group": "retrieval-18"
+  },
+  {
+    "question": "请根据我上传的资料回答：太阳系八大行星按离太阳远近怎么排？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-18-2",
+    "query_group": "retrieval-18"
+  },
+  {
+    "question": "资料里有没有说明：太阳系八大行星按离太阳远近怎么排？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-18-3",
+    "query_group": "retrieval-18"
+  },
+  {
+    "question": "我想核对文档中的信息，太阳系八大行星按离太阳远近怎么排？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-18-4",
+    "query_group": "retrieval-18"
+  },
+  {
+    "question": "从知识库内容看，太阳系八大行星按离太阳远近怎么排？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-18-5",
+    "query_group": "retrieval-18"
+  },
+  {
+    "question": "太阳系最大的行星是哪个？冥王星为什么被除名？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-19-1",
+    "query_group": "retrieval-19"
+  },
+  {
+    "question": "请根据我上传的资料回答：太阳系最大的行星是哪个？冥王星为什么被除名？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-19-2",
+    "query_group": "retrieval-19"
+  },
+  {
+    "question": "资料里有没有说明：太阳系最大的行星是哪个？冥王星为什么被除名？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-19-3",
+    "query_group": "retrieval-19"
+  },
+  {
+    "question": "我想核对文档中的信息，太阳系最大的行星是哪个？冥王星为什么被除名？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-19-4",
+    "query_group": "retrieval-19"
+  },
+  {
+    "question": "从知识库内容看，太阳系最大的行星是哪个？冥王星为什么被除名？",
+    "relevant_doc_ids": [
+      "solar-system"
+    ],
+    "case_id": "retrieval-19-5",
+    "query_group": "retrieval-19"
+  },
+  {
+    "question": "长江发源于哪里？最后流入哪个海？",
+    "relevant_doc_ids": [
+      "yangtze-river"
+    ],
+    "case_id": "retrieval-20-1",
+    "query_group": "retrieval-20"
+  },
+  {
+    "question": "请根据我上传的资料回答：长江发源于哪里？最后流入哪个海？",
+    "relevant_doc_ids": [
+      "yangtze-river"
+    ],
+    "case_id": "retrieval-20-2",
+    "query_group": "retrieval-20"
+  },
+  {
+    "question": "资料里有没有说明：长江发源于哪里？最后流入哪个海？",
+    "relevant_doc_ids": [
+      "yangtze-river"
+    ],
+    "case_id": "retrieval-20-3",
+    "query_group": "retrieval-20"
+  },
+  {
+    "question": "我想核对文档中的信息，长江发源于哪里？最后流入哪个海？",
+    "relevant_doc_ids": [
+      "yangtze-river"
+    ],
+    "case_id": "retrieval-20-4",
+    "query_group": "retrieval-20"
+  },
+  {
+    "question": "从知识库内容看，长江发源于哪里？最后流入哪个海？",
+    "relevant_doc_ids": [
+      "yangtze-river"
+    ],
+    "case_id": "retrieval-20-5",
+    "query_group": "retrieval-20"
+  }
+]

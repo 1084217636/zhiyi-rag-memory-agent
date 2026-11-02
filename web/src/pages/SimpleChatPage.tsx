@@ -73,7 +73,10 @@ export default function SimpleChatPage() {
           onToken: (token) => setMessages((current) => current.map((item) => item.id === assistantId ? { ...item, content: item.content + token } : item)),
           onToolStart: (tool) => setMessages((current) => current.map((item) => item.id === assistantId ? { ...item, tools: [...(item.tools || []), tool] } : item)),
           onCitation: (citations) => setMessages((current) => current.map((item) => item.id === assistantId ? { ...item, citations } : item)),
-          onError: (error) => message.error(error),
+          onError: (error) => {
+            message.error(error)
+            setMessages((current) => current.map((item) => item.id === assistantId ? { ...item, content: `生成失败：${error}` } : item))
+          },
         },
       )
       await loadConversations()

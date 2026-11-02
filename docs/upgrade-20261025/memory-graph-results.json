@@ -1,0 +1,19 @@
+{
+  "scope": "isolated disposable Neo4j; no application DB access",
+  "passed": [
+    "ADD persisted",
+    "NOOP retains source support",
+    "UPDATE retains superseded history",
+    "pending conflicts excluded from recall",
+    "active quota=2, overflow archived",
+    "successful ingestion replay is idempotent",
+    "stale revision rolls back graph write",
+    "cross-user recall isolated",
+    "concurrent same-user writers: one commit, one conflict",
+    "pending review is user-scoped and can reject",
+    "legacy graph reads exclude superseded source statement",
+    "graph hard cap rejects transaction without partial write",
+    "explicit replace supersedes old fact and activates new fact",
+    "explicit keep_both preserves both facts"
+  ]
+}

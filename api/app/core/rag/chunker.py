@@ -1,85 +1,129 @@
-"""文本分块：父子分块策略。
+"""Section-aware parent/child chunking with a hard token limit."""
 
-父块（~1024 token）提供上下文，子块（~256 token，10% 重叠）用于向量召回。
-按中英文句子边界切分后合并到目标 token 数。
-"""
 import re
+from dataclasses import dataclass, field
 
 import tiktoken
 
-# 子块/父块目标 token 数
-CHILD_CHUNK_TOKENS = 256
-PARENT_CHUNK_TOKENS = 1024
-CHILD_OVERLAP_RATIO = 0.1
-
-# 句子分隔符（中英文）
-_SENT_SEP = re.compile(r"(?<=[。！？\.\!\?\n])")
-
 _encoder = tiktoken.get_encoding("cl100k_base")
+_SENTENCE_END = re.compile(r"(?<=[。！？.!?；;])\s*|\n+")
+_HEADING = re.compile(r"^#{1,6}\s+|^第\s*\d+\s*页$")
+
+
+@dataclass(frozen=True)
+class ChunkConfig:
+    parent_tokens: int = 1024
+    child_tokens: int = 256
+    overlap_tokens: int = 24
+
+    def __post_init__(self) -> None:
+        if self.parent_tokens < 64 or self.child_tokens < 32:
+            raise ValueError("chunk token limits are too small")
+        if self.child_tokens >= self.parent_tokens:
+            raise ValueError("child_tokens must be smaller than parent_tokens")
+        if not 0 <= self.overlap_tokens < self.child_tokens // 2:
+            raise ValueError("overlap_tokens must be less than half a child chunk")
+
+
+@dataclass
+class ParentChunk:
+    content: str
+    children: list[str] = field(default_factory=list)
 
 
 def count_tokens(text: str) -> int:
     return len(_encoder.encode(text))
 
 
-def _split_sentences(text: str) -> list[str]:
-    parts = [s.strip() for s in _SENT_SEP.split(text) if s and s.strip()]
-    return parts
-
-
-def _merge_to_chunks(
-    sentences: list[str], target_tokens: int, overlap_ratio: float = 0.0
-) -> list[str]:
-    """把句子合并成不超过 target_tokens 的块，可带重叠。"""
-    chunks: list[str] = []
-    cur: list[str] = []
-    cur_tokens = 0
-    for sent in sentences:
-        st = count_tokens(sent)
-        # 单句超长：直接成块
-        if st >= target_tokens:
-            if cur:
-                chunks.append("".join(cur))
-                cur, cur_tokens = [], 0
-            chunks.append(sent)
-            continue
-        if cur_tokens + st > target_tokens and cur:
-            chunks.append("".join(cur))
-            # 重叠：保留尾部一部分句子
-            if overlap_ratio > 0:
-                keep = max(1, int(len(cur) * overlap_ratio))
-                cur = cur[-keep:]
-                cur_tokens = sum(count_tokens(s) for s in cur)
+def _hard_split(text: str, limit: int) -> list[str]:
+    """Split long sentences without producing a chunk above the token budget."""
+    out = []
+    remaining = text
+    while remaining:
+        if count_tokens(remaining) <= limit:
+            out.append(remaining)
+            break
+        low, high = 1, len(remaining)
+        while low < high:
+            middle = (low + high + 1) // 2
+            if count_tokens(remaining[:middle]) <= limit:
+                low = middle
             else:
-                cur, cur_tokens = [], 0
-        cur.append(sent)
-        cur_tokens += st
-    if cur:
-        chunks.append("".join(cur))
+                high = middle - 1
+        cut = max(1, low)
+        out.append(remaining[:cut])
+        remaining = remaining[cut:]
+    return out
+
+
+def _sentences(text: str, limit: int) -> list[str]:
+    pieces = [piece.strip() for piece in _SENTENCE_END.split(text) if piece.strip()]
+    return [part for piece in pieces for part in _hard_split(piece, limit)]
+
+
+def _sections(text: str) -> list[tuple[str, str]]:
+    sections: list[tuple[str, str]] = []
+    heading = ""
+    lines: list[str] = []
+    for line in text.replace("\r\n", "\n").split("\n"):
+        stripped = line.strip()
+        if "\f" in line or _HEADING.match(stripped):
+            if lines:
+                sections.append((heading, "\n".join(lines).strip()))
+                lines = []
+            heading = stripped.replace("\f", "").strip()
+        elif stripped:
+            lines.append(stripped)
+    if lines:
+        sections.append((heading, "\n".join(lines).strip()))
+    return sections or [("", text.strip())]
+
+
+def _pack(parts: list[str], limit: int, overlap: int = 0) -> list[str]:
+    chunks: list[str] = []
+    current: list[str] = []
+    for part in parts:
+        if current and count_tokens("\n".join([*current, part])) > limit:
+            chunks.append("\n".join(current))
+            tail = current[-1] if overlap else ""
+            if tail and count_tokens(tail) <= overlap:
+                current = [tail]
+            elif overlap and tail:
+                # A token slice may start halfway through a UTF-8 character.
+                # Choose a Unicode-safe suffix, then verify its token budget.
+                low, high = 0, len(tail)
+                while low < high:
+                    middle = (low + high + 1) // 2
+                    if count_tokens(tail[-middle:]) <= overlap:
+                        low = middle
+                    else:
+                        high = middle - 1
+                suffix = tail[-low:].strip() if low else ""
+                current = [suffix] if suffix else []
+            else:
+                current = []
+        if current and count_tokens("\n".join([*current, part])) > limit:
+            current = []
+        current.append(part)
+    if current:
+        chunks.append("\n".join(current))
     return chunks
 
 
-class ParentChunk:
-    """一个父块及其下的子块。"""
-
-    def __init__(self, content: str):
-        self.content = content
-        self.children: list[str] = []
-
-
-def chunk_parent_child(text: str) -> list[ParentChunk]:
-    """父子分块：先切父块，再在每个父块内切子块。"""
-    text = text.strip()
-    if not text:
+def chunk_parent_child(text: str, config: ChunkConfig | None = None) -> list[ParentChunk]:
+    config = config or ChunkConfig()
+    if not text.strip():
         return []
-    sentences = _split_sentences(text)
-    parent_contents = _merge_to_chunks(sentences, PARENT_CHUNK_TOKENS)
     result: list[ParentChunk] = []
-    for pc in parent_contents:
-        parent = ParentChunk(pc)
-        child_sents = _split_sentences(pc)
-        parent.children = _merge_to_chunks(
-            child_sents, CHILD_CHUNK_TOKENS, CHILD_OVERLAP_RATIO
-        )
-        result.append(parent)
+    for heading, body in _sections(text):
+        prefix = heading + "\n" if heading else ""
+        budget = config.parent_tokens - count_tokens(prefix)
+        if budget < config.child_tokens:
+            prefix = ""
+            budget = config.parent_tokens
+        for parent_body in _pack(_sentences(body, budget), budget):
+            content = prefix + parent_body
+            children = _pack(_sentences(content, config.child_tokens),
+                             config.child_tokens, config.overlap_tokens)
+            result.append(ParentChunk(content=content, children=children))
     return result

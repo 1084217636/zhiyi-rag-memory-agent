@@ -2,11 +2,16 @@
 
 import uuid
 
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import BizError
 from app.core.logging import get_logger
-from app.models.memory_model import MEMORY_SOURCE_MANUAL, MEMORY_STATUS_PENDING, Memory
+from app.core.memory.governance.policy import source_id
+from app.models.memory_model import (
+    MEMORY_SOURCE_MANUAL, MEMORY_STATUS_PENDING, MEMORY_STATUS_DELETING,
+    MEMORY_STATUS_DELETED, Memory,
+)
 from app.repositories.memory_repository import MemoryRepository
 
 logger = get_logger(__name__)
@@ -27,7 +32,12 @@ class MemoryService:
             source=MEMORY_SOURCE_MANUAL, status=MEMORY_STATUS_PENDING,
         ))
         from app.tasks.memory import extract_memory_task
-        extract_memory_task.delay(str(memory.id))
+        try:
+            extract_memory_task.delay(str(memory.id))
+        except Exception:
+            # The committed pending row is the recovery source. Returning an
+            # HTTP error here would encourage a duplicate user submission.
+            logger.exception("记忆初次派发失败，等待定时补发: memory=%s", memory.id)
         logger.info("主动记住已提交萃取: memory=%s", memory.id)
         return memory
 
@@ -41,7 +51,27 @@ class MemoryService:
         return await self.repo.list_by_user(user_id, page, page_size)
 
     async def delete(self, user_id: uuid.UUID, memory_id: uuid.UUID) -> None:
-        await self.repo.delete(await self.get_detail(user_id, memory_id))
+        memory = await self.get_detail(user_id, memory_id)
+        if memory.status == MEMORY_STATUS_DELETED:
+            return
+        # Commit the marker before graph cleanup: a queued worker can no longer
+        # claim this source. Repeating DELETE retries a failed graph cleanup.
+        await self.session.execute(
+            update(Memory).where(Memory.id == memory_id, Memory.user_id == user_id)
+            .values(status=MEMORY_STATUS_DELETING)
+        )
+        await self.session.commit()
+        from app.repositories.neo4j.memory_graph_repository import MemoryGraphRepository
+        await MemoryGraphRepository().purge_memory_source(
+            str(user_id), str(memory_id), memory.graph_dialogue_id or
+            source_id(str(user_id), str(memory_id), "dialogue")
+        )
+        await self.session.execute(
+            update(Memory).where(Memory.id == memory_id, Memory.user_id == user_id)
+            .values(status=MEMORY_STATUS_DELETED, raw_text="", graph_dialogue_id=None,
+                    graph_stats=None, error_msg=None)
+        )
+        await self.session.commit()
 
     async def search(self, user_id: uuid.UUID, query: str, top_k: int = 10) -> list[dict]:
         """使用向量、全文与图邻居进行混合召回。"""

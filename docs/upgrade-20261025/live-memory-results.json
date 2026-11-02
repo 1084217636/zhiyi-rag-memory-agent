@@ -1,0 +1,32 @@
+{
+  "scope": "real chat and embedding models + isolated Neo4j; synthetic user; background clustering/reflection mocked",
+  "passed": [
+    "multiple atomic statements extracted",
+    "source-validated active admission",
+    "plan type persisted",
+    "typed relevant recall",
+    "same task redelivery does not add statements"
+  ],
+  "stats": {
+    "dialogue_id": "d8a7586ed101fec92e65ece01c66652a0308a55a048663187a4adc9fed7338ed",
+    "chunks": 1,
+    "statements": 2,
+    "skipped_statements": 0,
+    "decisions": {
+      "ADD": 2
+    },
+    "entities": 3,
+    "relations": 2,
+    "events": 0,
+    "entity_ids": [
+      "c688eb42250b48e9bdb2af26cd2cdf96",
+      "c5422c45fc794dd68cd2b759436bcc42",
+      "9c02c95b0f5d4814aee8c6dc27c5f5c8"
+    ]
+  },
+  "counts": {
+    "active": 2
+  },
+  "recalled": "- 用户记忆（陈述）\n    · 计划：用户计划下个月去深圳旅行\n- 用户记忆（陈述）\n    · 事实：用户在研究WiFi CSI",
+  "elapsed_seconds": 30.19
+}

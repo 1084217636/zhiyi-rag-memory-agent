@@ -1,0 +1,939 @@
+{
+  "scope": "fixed 10-doc/22-query set, real configured embeddings, isolated ES",
+  "corpus": 10,
+  "queries": 22,
+  "elapsed_seconds": 33.991,
+  "summary": {
+    "vector": {
+      "recall@5": 1.0,
+      "mrr": 0.9773,
+      "ndcg@5": 0.9861
+    },
+    "bm25": {
+      "recall@5": 1.0,
+      "mrr": 1.0,
+      "ndcg@5": 0.9944
+    },
+    "hybrid": {
+      "recall@5": 1.0,
+      "mrr": 1.0,
+      "ndcg@5": 0.9944
+    }
+  },
+  "details": [
+    {
+      "question": "居里夫人获得过几次诺贝尔奖？分别是什么领域？",
+      "gold": [
+        "marie-curie"
+      ],
+      "ranked": {
+        "vector": [
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "radium",
+          "mount-everest",
+          "photosynthesis",
+          "solar-system",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda"
+        ],
+        "bm25": [
+          "marie-curie",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "radium",
+          "mount-everest",
+          "photosynthesis",
+          "solar-system",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda"
+        ]
+      }
+    },
+    {
+      "question": "钋和镭是谁发现的？什么时候发现的？",
+      "gold": [
+        "marie-curie",
+        "radium"
+      ],
+      "ranked": {
+        "vector": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "photosynthesis",
+          "mount-everest",
+          "great-wall",
+          "solar-system",
+          "yangtze-river",
+          "giant-panda"
+        ],
+        "bm25": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "yangtze-river",
+          "great-wall",
+          "photosynthesis",
+          "solar-system",
+          "giant-panda",
+          "nobel-prize",
+          "mount-everest"
+        ],
+        "hybrid": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "photosynthesis",
+          "great-wall",
+          "mount-everest",
+          "solar-system",
+          "yangtze-river",
+          "giant-panda"
+        ]
+      }
+    },
+    {
+      "question": "镭的放射性有多强？",
+      "gold": [
+        "radium"
+      ],
+      "ranked": {
+        "vector": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "mount-everest",
+          "solar-system",
+          "photosynthesis",
+          "nobel-prize",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda"
+        ],
+        "bm25": [
+          "radium",
+          "marie-curie",
+          "solar-system",
+          "great-wall",
+          "giant-panda",
+          "penicillin",
+          "mount-everest",
+          "photosynthesis",
+          "yangtze-river",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "mount-everest",
+          "solar-system",
+          "photosynthesis",
+          "nobel-prize",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda"
+        ]
+      }
+    },
+    {
+      "question": "镭曾经被用来做什么？为什么后来被禁止？",
+      "gold": [
+        "radium"
+      ],
+      "ranked": {
+        "vector": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "great-wall",
+          "photosynthesis",
+          "nobel-prize",
+          "solar-system",
+          "mount-everest",
+          "giant-panda",
+          "yangtze-river"
+        ],
+        "bm25": [
+          "radium",
+          "solar-system",
+          "marie-curie",
+          "great-wall",
+          "giant-panda",
+          "nobel-prize",
+          "penicillin"
+        ],
+        "hybrid": [
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "great-wall",
+          "photosynthesis",
+          "nobel-prize",
+          "giant-panda",
+          "mount-everest",
+          "yangtze-river"
+        ]
+      }
+    },
+    {
+      "question": "诺贝尔奖是怎么来的？最早有哪几个奖项？",
+      "gold": [
+        "nobel-prize"
+      ],
+      "ranked": {
+        "vector": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "yangtze-river",
+          "photosynthesis",
+          "great-wall",
+          "radium",
+          "mount-everest",
+          "giant-panda"
+        ],
+        "bm25": [
+          "nobel-prize",
+          "radium",
+          "marie-curie",
+          "great-wall",
+          "yangtze-river",
+          "solar-system",
+          "giant-panda",
+          "penicillin",
+          "mount-everest",
+          "photosynthesis"
+        ],
+        "hybrid": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "great-wall",
+          "radium",
+          "solar-system",
+          "yangtze-river",
+          "photosynthesis",
+          "mount-everest",
+          "giant-panda"
+        ]
+      }
+    },
+    {
+      "question": "诺贝尔和平奖由哪个机构评选？",
+      "gold": [
+        "nobel-prize"
+      ],
+      "ranked": {
+        "vector": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "mount-everest",
+          "radium",
+          "photosynthesis",
+          "great-wall",
+          "giant-panda",
+          "yangtze-river"
+        ],
+        "bm25": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "mount-everest",
+          "radium",
+          "solar-system"
+        ],
+        "hybrid": [
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "solar-system",
+          "mount-everest",
+          "radium",
+          "photosynthesis",
+          "great-wall",
+          "giant-panda",
+          "yangtze-river"
+        ]
+      }
+    },
+    {
+      "question": "发现镭的科学家因为这个发现获得了什么奖？",
+      "gold": [
+        "marie-curie",
+        "nobel-prize"
+      ],
+      "ranked": {
+        "vector": [
+          "radium",
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "solar-system",
+          "photosynthesis",
+          "mount-everest",
+          "great-wall",
+          "giant-panda",
+          "yangtze-river"
+        ],
+        "bm25": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "solar-system",
+          "great-wall",
+          "giant-panda",
+          "mount-everest",
+          "photosynthesis",
+          "yangtze-river"
+        ],
+        "hybrid": [
+          "marie-curie",
+          "radium",
+          "penicillin",
+          "nobel-prize",
+          "solar-system",
+          "photosynthesis",
+          "mount-everest",
+          "great-wall",
+          "giant-panda",
+          "yangtze-river"
+        ]
+      }
+    },
+    {
+      "question": "青霉素是谁发现的？怎么发现的？",
+      "gold": [
+        "penicillin"
+      ],
+      "ranked": {
+        "vector": [
+          "penicillin",
+          "radium",
+          "marie-curie",
+          "photosynthesis",
+          "nobel-prize",
+          "mount-everest",
+          "great-wall",
+          "solar-system",
+          "yangtze-river",
+          "giant-panda"
+        ],
+        "bm25": [
+          "penicillin",
+          "marie-curie",
+          "radium",
+          "yangtze-river",
+          "solar-system",
+          "great-wall",
+          "giant-panda",
+          "mount-everest",
+          "photosynthesis",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "penicillin",
+          "marie-curie",
+          "radium",
+          "photosynthesis",
+          "nobel-prize",
+          "mount-everest",
+          "great-wall",
+          "solar-system",
+          "yangtze-river",
+          "giant-panda"
+        ]
+      }
+    },
+    {
+      "question": "弗莱明因为青霉素获得了哪一年的诺贝尔奖？",
+      "gold": [
+        "penicillin"
+      ],
+      "ranked": {
+        "vector": [
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "radium",
+          "mount-everest",
+          "photosynthesis",
+          "solar-system",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda"
+        ],
+        "bm25": [
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "radium",
+          "solar-system",
+          "great-wall",
+          "giant-panda",
+          "mount-everest",
+          "photosynthesis",
+          "yangtze-river"
+        ],
+        "hybrid": [
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "radium",
+          "photosynthesis",
+          "mount-everest",
+          "solar-system",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda"
+        ]
+      }
+    },
+    {
+      "question": "长城是为了什么修建的？秦始皇做了什么？",
+      "gold": [
+        "great-wall"
+      ],
+      "ranked": {
+        "vector": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "penicillin",
+          "solar-system",
+          "nobel-prize",
+          "marie-curie",
+          "giant-panda",
+          "radium",
+          "photosynthesis"
+        ],
+        "bm25": [
+          "great-wall",
+          "radium",
+          "solar-system",
+          "marie-curie",
+          "giant-panda",
+          "penicillin",
+          "mount-everest",
+          "photosynthesis",
+          "yangtze-river",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "penicillin",
+          "solar-system",
+          "nobel-prize",
+          "marie-curie",
+          "giant-panda",
+          "radium",
+          "photosynthesis"
+        ]
+      }
+    },
+    {
+      "question": "现存保存最好的长城是哪个朝代修的？",
+      "gold": [
+        "great-wall"
+      ],
+      "ranked": {
+        "vector": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "giant-panda",
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "nobel-prize",
+          "photosynthesis"
+        ],
+        "bm25": [
+          "great-wall",
+          "yangtze-river",
+          "solar-system",
+          "radium",
+          "marie-curie",
+          "giant-panda",
+          "penicillin",
+          "mount-everest",
+          "photosynthesis",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "great-wall",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "giant-panda",
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "nobel-prize",
+          "photosynthesis"
+        ]
+      }
+    },
+    {
+      "question": "珠穆朗玛峰有多高？在哪两个国家交界？",
+      "gold": [
+        "mount-everest"
+      ],
+      "ranked": {
+        "vector": [
+          "mount-everest",
+          "great-wall",
+          "yangtze-river",
+          "giant-panda",
+          "marie-curie",
+          "radium",
+          "solar-system",
+          "nobel-prize",
+          "penicillin",
+          "photosynthesis"
+        ],
+        "bm25": [
+          "mount-everest",
+          "giant-panda",
+          "yangtze-river",
+          "photosynthesis",
+          "marie-curie"
+        ],
+        "hybrid": [
+          "mount-everest",
+          "giant-panda",
+          "yangtze-river",
+          "great-wall",
+          "marie-curie",
+          "radium",
+          "solar-system",
+          "nobel-prize",
+          "photosynthesis",
+          "penicillin"
+        ]
+      }
+    },
+    {
+      "question": "谁第一个登顶珠穆朗玛峰？",
+      "gold": [
+        "mount-everest"
+      ],
+      "ranked": {
+        "vector": [
+          "mount-everest",
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "great-wall",
+          "yangtze-river",
+          "radium",
+          "solar-system",
+          "giant-panda",
+          "photosynthesis"
+        ],
+        "bm25": [
+          "mount-everest"
+        ],
+        "hybrid": [
+          "mount-everest",
+          "marie-curie",
+          "nobel-prize",
+          "penicillin",
+          "great-wall",
+          "yangtze-river",
+          "radium",
+          "solar-system",
+          "giant-panda",
+          "photosynthesis"
+        ]
+      }
+    },
+    {
+      "question": "大熊猫主要吃什么？分布在哪里？",
+      "gold": [
+        "giant-panda"
+      ],
+      "ranked": {
+        "vector": [
+          "giant-panda",
+          "yangtze-river",
+          "solar-system",
+          "photosynthesis",
+          "mount-everest",
+          "great-wall",
+          "nobel-prize",
+          "marie-curie",
+          "radium",
+          "penicillin"
+        ],
+        "bm25": [
+          "giant-panda",
+          "photosynthesis",
+          "yangtze-river",
+          "penicillin",
+          "mount-everest",
+          "radium",
+          "marie-curie",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "giant-panda",
+          "photosynthesis",
+          "yangtze-river",
+          "solar-system",
+          "mount-everest",
+          "great-wall",
+          "nobel-prize",
+          "marie-curie",
+          "penicillin",
+          "radium"
+        ]
+      }
+    },
+    {
+      "question": "大熊猫的保护级别有什么变化？",
+      "gold": [
+        "giant-panda"
+      ],
+      "ranked": {
+        "vector": [
+          "giant-panda",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "nobel-prize",
+          "great-wall",
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "photosynthesis"
+        ],
+        "bm25": [
+          "giant-panda",
+          "yangtze-river",
+          "radium",
+          "solar-system",
+          "marie-curie",
+          "great-wall",
+          "penicillin",
+          "mount-everest",
+          "photosynthesis",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "giant-panda",
+          "yangtze-river",
+          "mount-everest",
+          "solar-system",
+          "nobel-prize",
+          "great-wall",
+          "radium",
+          "marie-curie",
+          "penicillin",
+          "photosynthesis"
+        ]
+      }
+    },
+    {
+      "question": "光合作用把什么转化成什么？发生在植物的哪里？",
+      "gold": [
+        "photosynthesis"
+      ],
+      "ranked": {
+        "vector": [
+          "photosynthesis",
+          "penicillin",
+          "radium",
+          "marie-curie",
+          "solar-system",
+          "yangtze-river",
+          "nobel-prize",
+          "mount-everest",
+          "giant-panda",
+          "great-wall"
+        ],
+        "bm25": [
+          "photosynthesis",
+          "radium",
+          "solar-system",
+          "marie-curie",
+          "great-wall",
+          "giant-panda",
+          "penicillin",
+          "mount-everest",
+          "yangtze-river",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "photosynthesis",
+          "penicillin",
+          "radium",
+          "marie-curie",
+          "solar-system",
+          "yangtze-river",
+          "nobel-prize",
+          "mount-everest",
+          "giant-panda",
+          "great-wall"
+        ]
+      }
+    },
+    {
+      "question": "为什么树叶是绿色的？",
+      "gold": [
+        "photosynthesis"
+      ],
+      "ranked": {
+        "vector": [
+          "photosynthesis",
+          "yangtze-river",
+          "solar-system",
+          "great-wall",
+          "marie-curie",
+          "mount-everest",
+          "penicillin",
+          "radium",
+          "giant-panda",
+          "nobel-prize"
+        ],
+        "bm25": [
+          "photosynthesis",
+          "yangtze-river",
+          "solar-system",
+          "radium",
+          "great-wall",
+          "marie-curie",
+          "giant-panda",
+          "penicillin",
+          "mount-everest",
+          "nobel-prize"
+        ],
+        "hybrid": [
+          "photosynthesis",
+          "yangtze-river",
+          "solar-system",
+          "great-wall",
+          "marie-curie",
+          "mount-everest",
+          "penicillin",
+          "radium",
+          "giant-panda",
+          "nobel-prize"
+        ]
+      }
+    },
+    {
+      "question": "太阳系八大行星按离太阳远近怎么排？",
+      "gold": [
+        "solar-system"
+      ],
+      "ranked": {
+        "vector": [
+          "solar-system",
+          "mount-everest",
+          "radium",
+          "nobel-prize",
+          "yangtze-river",
+          "photosynthesis",
+          "marie-curie",
+          "giant-panda",
+          "penicillin",
+          "great-wall"
+        ],
+        "bm25": [
+          "solar-system"
+        ],
+        "hybrid": [
+          "solar-system",
+          "mount-everest",
+          "radium",
+          "nobel-prize",
+          "yangtze-river",
+          "photosynthesis",
+          "marie-curie",
+          "giant-panda",
+          "penicillin",
+          "great-wall"
+        ]
+      }
+    },
+    {
+      "question": "太阳系最大的行星是哪个？冥王星为什么被除名？",
+      "gold": [
+        "solar-system"
+      ],
+      "ranked": {
+        "vector": [
+          "solar-system",
+          "nobel-prize",
+          "mount-everest",
+          "radium",
+          "yangtze-river",
+          "marie-curie",
+          "penicillin",
+          "photosynthesis",
+          "great-wall",
+          "giant-panda"
+        ],
+        "bm25": [
+          "solar-system",
+          "yangtze-river",
+          "great-wall",
+          "radium",
+          "giant-panda",
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "mount-everest",
+          "photosynthesis"
+        ],
+        "hybrid": [
+          "solar-system",
+          "nobel-prize",
+          "radium",
+          "yangtze-river",
+          "mount-everest",
+          "great-wall",
+          "penicillin",
+          "marie-curie",
+          "photosynthesis",
+          "giant-panda"
+        ]
+      }
+    },
+    {
+      "question": "长江发源于哪里？最后流入哪个海？",
+      "gold": [
+        "yangtze-river"
+      ],
+      "ranked": {
+        "vector": [
+          "yangtze-river",
+          "great-wall",
+          "solar-system",
+          "marie-curie",
+          "mount-everest",
+          "photosynthesis",
+          "nobel-prize",
+          "penicillin",
+          "giant-panda",
+          "radium"
+        ],
+        "bm25": [
+          "yangtze-river"
+        ],
+        "hybrid": [
+          "yangtze-river",
+          "great-wall",
+          "solar-system",
+          "marie-curie",
+          "mount-everest",
+          "photosynthesis",
+          "nobel-prize",
+          "penicillin",
+          "giant-panda",
+          "radium"
+        ]
+      }
+    },
+    {
+      "question": "三峡大坝有什么功能？",
+      "gold": [
+        "yangtze-river"
+      ],
+      "ranked": {
+        "vector": [
+          "yangtze-river",
+          "great-wall",
+          "photosynthesis",
+          "giant-panda",
+          "mount-everest",
+          "nobel-prize",
+          "penicillin",
+          "solar-system",
+          "marie-curie",
+          "radium"
+        ],
+        "bm25": [
+          "yangtze-river"
+        ],
+        "hybrid": [
+          "yangtze-river",
+          "great-wall",
+          "photosynthesis",
+          "giant-panda",
+          "mount-everest",
+          "nobel-prize",
+          "penicillin",
+          "solar-system",
+          "marie-curie",
+          "radium"
+        ]
+      }
+    },
+    {
+      "question": "长江和珠穆朗玛峰分别和青藏高原有什么关系？",
+      "gold": [
+        "yangtze-river",
+        "mount-everest"
+      ],
+      "ranked": {
+        "vector": [
+          "yangtze-river",
+          "mount-everest",
+          "great-wall",
+          "solar-system",
+          "giant-panda",
+          "photosynthesis",
+          "penicillin",
+          "nobel-prize",
+          "marie-curie",
+          "radium"
+        ],
+        "bm25": [
+          "yangtze-river",
+          "mount-everest",
+          "nobel-prize",
+          "photosynthesis",
+          "penicillin",
+          "radium",
+          "great-wall",
+          "marie-curie",
+          "giant-panda",
+          "solar-system"
+        ],
+        "hybrid": [
+          "yangtze-river",
+          "mount-everest",
+          "great-wall",
+          "solar-system",
+          "giant-panda",
+          "photosynthesis",
+          "penicillin",
+          "marie-curie",
+          "nobel-prize",
+          "radium"
+        ]
+      }
+    }
+  ],
+  "comparison_note": "Historical baseline preserved separately; identical corpus/questions, model version/host/time not controlled, no causal improvement claim."
+}

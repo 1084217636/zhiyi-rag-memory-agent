@@ -22,6 +22,10 @@ VECTOR_DIMS = settings.embedding_dims
 
 # 唯一约束：核心节点按 id 唯一，保证 MERGE 幂等、并发安全
 _CONSTRAINTS = [
+    "CREATE CONSTRAINT memory_ledger_user_unique IF NOT EXISTS FOR (n:MemoryLedger) REQUIRE n.user_id IS UNIQUE",
+    "CREATE CONSTRAINT memory_ingestion_id_unique IF NOT EXISTS FOR (n:MemoryIngestion) REQUIRE n.id IS UNIQUE",
+    "CREATE CONSTRAINT memory_operation_id_unique IF NOT EXISTS FOR (n:MemoryOperation) REQUIRE n.id IS UNIQUE",
+    "CREATE CONSTRAINT memory_tombstone_id_unique IF NOT EXISTS FOR (n:MemoryTombstone) REQUIRE n.id IS UNIQUE",
     f"CREATE CONSTRAINT dialogue_id_unique IF NOT EXISTS "
     f"FOR (n:{LABEL_DIALOGUE}) REQUIRE n.id IS UNIQUE",
     f"CREATE CONSTRAINT chunk_id_unique IF NOT EXISTS "

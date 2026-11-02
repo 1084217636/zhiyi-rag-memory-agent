@@ -9,6 +9,10 @@
 """
 from datetime import datetime
 
+from app.config import settings
+from app.core.memory.governance.policy import source_id, classify_kind
+from app.core.memory.governance.service import prepare_policy
+
 from app.core.llm.client import LLMClient
 from app.core.logging import get_logger
 from app.core.memory.extraction import dedup, embedder, triplet_extractor
@@ -39,6 +43,8 @@ class ExtractionStats:
         self.chunk_count = 0
         self.statement_count = 0
         self.entity_count = 0
+        self.skipped_statements = 0
+        self.decisions = {}
         self.relation_count = 0
         self.event_count = 0
         self.entity_ids: list[str] = []
@@ -48,6 +54,8 @@ class ExtractionStats:
             "dialogue_id": self.dialogue_id,
             "chunks": self.chunk_count,
             "statements": self.statement_count,
+            "skipped_statements": self.skipped_statements,
+            "decisions": self.decisions,
             "entities": self.entity_count,
             "relations": self.relation_count,
             "events": self.event_count,
@@ -73,6 +81,7 @@ async def run_extraction(
     source: str = SOURCE_MANUAL,
     source_message_id: str | None = None,
     dialog_at: datetime | None = None,
+    ingestion_id: str | None = None,
 ) -> ExtractionStats:
     """对一段文本执行完整萃取并写入图谱。"""
     stats = ExtractionStats()
@@ -88,6 +97,9 @@ async def run_extraction(
         user_id=user_id, content=text, source=source,
         source_message_id=source_message_id, dialog_at=dialog_at,
     )
+    ingestion_id = ingestion_id or dialogue.id
+    if settings.memory_governance_enabled:
+        dialogue.id = source_id(user_id, ingestion_id, "dialogue")
     stats.dialogue_id = dialogue.id
 
     # 2. 分块
@@ -96,6 +108,9 @@ async def run_extraction(
         ChunkNode(user_id=user_id, dialog_id=dialogue.id, content=ct, sequence=i)
         for i, ct in enumerate(chunk_texts)
     ]
+    if settings.memory_governance_enabled:
+        for i, chunk in enumerate(chunks):
+            chunk.id = source_id(user_id, ingestion_id, "chunk", i)
     stats.chunk_count = len(chunks)
 
     statements: list[StatementNode] = []
@@ -114,6 +129,9 @@ async def run_extraction(
         extracted_stmts = await statement_extractor.extract_statements(
             chat_client, chunk.content, context=text if len(chunks) > 1 else None
         )
+        remaining = max(0, settings.memory_max_statements_per_input - len(statements))
+        stats.skipped_statements += max(0,len(extracted_stmts)-remaining)
+        extracted_stmts = extracted_stmts[:remaining]
         if not extracted_stmts:
             continue
         triplet_results = await triplet_extractor.extract_triplets_batch(
@@ -132,6 +150,8 @@ async def run_extraction(
                 emotion_intensity=stmt.emotion_intensity,
                 emotion_keywords=stmt.emotion_keywords,
             )
+            if settings.memory_governance_enabled:
+                stmt_node.id = source_id(user_id, ingestion_id, "statement", len(statements))
             statements.append(stmt_node)
             # 该陈述内 局部 entity_idx → EntityNode
             idx_map: dict[int, EntityNode] = {}
@@ -150,19 +170,26 @@ async def run_extraction(
                 ))
             for trip in tres.triplets:
                 pending_triplets.append((stmt_node.id, trip, idx_map))
-            for ev in tres.events:
-                pending_events.append((ev, chunk_name_map))
+            if classify_kind(stmt.statement, stmt.statement_type) == "FACT" and stmt.temporal_type == "STATIC":
+                for ev in tres.events:
+                    pending_events.append((ev, chunk_name_map))
 
     stats.statement_count = len(statements)
     if source == SOURCE_MANUAL and not statements:
         raise RuntimeError("主动记忆未抽取到有效陈述，请检查对话模型输出")
+    policy = None
+    if settings.memory_governance_enabled:
+        policy = await prepare_policy(MemoryGraphRepository(), chat_client, embed_client,
+                                      user_id, statements, ingestion_id, source_text=text)
+        for item in policy["plans"]:
+            stats.decisions[item["action"]] = stats.decisions.get(item["action"],0)+1
     if not entity_pool:
         if source == SOURCE_MANUAL:
             raise RuntimeError("主动记忆已抽取陈述，但未抽取到任何实体")
         # 没抽到实体也写来源 + 陈述（保留溯源），关系/事件为空
         await _persist(
             dialogue=dialogue, chunks=chunks, statements=statements,
-            entities=[], mentions=mentions, relations=[], events=[], involves=[],
+            entities=[], mentions=mentions, relations=[], events=[], involves=[], policy=policy,
         )
         return stats
 
@@ -181,7 +208,10 @@ async def run_extraction(
 
     # 合并两层重定向：原始 EntityNode.id → 最终落库 id
     def resolve(eid: str) -> str:
-        eid = redirect1.get(eid, eid)
+        seen = set()
+        while eid in redirect1 and eid not in seen:
+            seen.add(eid)
+            eid = redirect1[eid]
         eid = redirect2.get(eid, eid)
         return eid
 
@@ -247,7 +277,7 @@ async def run_extraction(
     await _persist(
         dialogue=dialogue, chunks=chunks, statements=statements,
         entities=final_entities, mentions=mentions, relations=relations,
-        events=events, involves=involves,
+        events=events, involves=involves, policy=policy,
     )
 
     # 11. 增量社区聚类（新实体归入社区；失败不影响萃取结果）
@@ -297,12 +327,13 @@ async def _persist(
     relations: list[RelationEdge],
     events: list[EventNode],
     involves: list[InvolvesEdge],
+    policy: dict | None = None,
 ) -> None:
     repo = MemoryGraphRepository()
     await repo.save_graph(
         dialogues=[dialogue], chunks=chunks, statements=statements,
         entities=entities, events=events, mentions=mentions,
-        relations=relations, involves=involves,
+        relations=relations, involves=involves, policy=policy,
     )
 
 

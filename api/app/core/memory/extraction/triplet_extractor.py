@@ -1,7 +1,7 @@
 """三元组萃取：从单条陈述抽取实体与 (主语, 谓词, 宾语) 三元组。
 
 按受控词表（13 类实体 + 13 类谓词）约束 LLM 输出。指代未解析的陈述直接跳过。
-失败返回空结果，不中断流水线。
+模型或解析失败会抛错；无法解析指代时可以合法跳过。
 """
 import asyncio
 
@@ -51,8 +51,8 @@ async def extract_triplets(
         data = parse_json_object(answer)
         return TripletExtractionResult.model_validate(data)
     except Exception as e:
-        logger.warning("三元组萃取失败（忽略该句）: %r", e)
-        return TripletExtractionResult()
+        logger.warning("三元组萃取失败: %r", e)
+        raise RuntimeError("实体关系抽取失败，任务需重试") from e
 
 
 async def extract_triplets_batch(

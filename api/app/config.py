@@ -6,7 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        # Local eval credentials may also serve as the development-only model
+        # fallback. Production still resolves per-user model rows from PostgreSQL.
+        env_file=(".env", "eval/.env.eval"), env_file_encoding="utf-8", extra="ignore"
     )
 
     # 应用
@@ -81,6 +83,15 @@ class Settings(BaseSettings):
     # 知识库 RAG
     embedding_dims: int = 1024  # 向量维度，ES 索引与 embed 调用统一用此值
 
+    # Local development fallback; sourced from api/eval/.env.eval and never
+    # used outside APP_ENV=development. A user's PostgreSQL config takes priority.
+    eval_chat_base_url: str = ""
+    eval_chat_model: str = ""
+    eval_chat_key: str = ""
+    eval_embed_base_url: str = ""
+    eval_embed_model: str = ""
+    eval_embed_key: str = ""
+
     # 全局搜索语义门控（精确导向）：只展示余弦相似度 ≥ 阈值的结果，没有就不展示
     # 阈值为真实余弦相似度（-1~1），按实测可调；偏高更精准、偏低召回更多
     global_search_min_vector_score: float = 0.45
@@ -151,6 +162,44 @@ class Settings(BaseSettings):
     research_task_timeout: int = 900  # 单次定时研究整体超时（秒）
     # 定时任务完成后推送通知用的站点地址（拼报告链接）
     notify_site_url: str = "http://localhost:5173"
+
+    # Bounded execution and governed memory; defaults are project policy, not industry limits.
+    rag_fusion_method: str = "rrf"  # rank fusion avoids comparing incomparable BM25/vector score scales
+    rag_vector_weight: float = 0.6
+    rag_rrf_k: int = 60
+    rag_query_embedding_cache_ttl_seconds: int = 300
+    rag_parent_chunk_tokens: int = 1024
+    rag_child_chunk_tokens: int = 256
+    rag_child_overlap_tokens: int = 24
+    agent_input_token_budget: int = 12000
+    agent_output_token_budget: int = 1024
+    agent_max_tool_calls: int = 8
+    agent_tool_timeout_seconds: float = 20.0
+    agent_model_timeout_seconds: float = 60.0
+    agent_run_timeout_seconds: float = 180.0
+    agent_tool_retries: int = 1
+    agent_tool_argument_max_chars: int = 6000
+    agent_tool_output_max_chars: int = 24000
+    # External MCP tools can have side effects; the chat path exposes only
+    # explicitly reviewed tool names when both controls are configured.
+    agent_external_tools_enabled: bool = False
+    agent_external_tool_allowlist: str = ""
+    agent_requests_per_minute: int = 12
+    agent_max_concurrent_runs_per_user: int = 2
+    agent_max_concurrent_runs_global: int = 32
+    # Traces contain counts, statuses and timings by default; previews may
+    # contain private documents or secrets and require an explicit opt-in.
+    trace_capture_content: bool = False
+    memory_governance_enabled: bool = True
+    memory_active_limit: int = 1000
+    memory_graph_node_limit: int = 10000
+    memory_candidate_limit: int = 8
+    memory_max_statements_per_input: int = 24
+    memory_plan_ttl_days: int = 30
+    memory_inference_ttl_days: int = 7
+    memory_decision_timeout_seconds: float = 30.0
+    # Never rebuild an existing index automatically during application startup.
+    allow_automatic_index_rebuild: bool = False
 
     # ── V0.0.5 ② Verifier Loop（Loop Engineering 落地）──
     # 是否启用 Verifier Loop。关闭时 research engine 跳过质量复核环节,行为与之前完全一致。

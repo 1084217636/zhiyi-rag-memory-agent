@@ -2,7 +2,7 @@ services:
   # ============ 存储层 ============
   postgres:
     image: postgres:16-alpine
-    container_name: zhiyi-postgres
+    container_name: zhiyi-next-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-zhiyi}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zhiyi}
@@ -20,7 +20,7 @@ services:
   elasticsearch:
     build: ./docker/es
     image: zhiyi-es-ik:8.17.0
-    container_name: zhiyi-es
+    container_name: zhiyi-next-es
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -37,7 +37,7 @@ services:
 
   neo4j:
     image: neo4j:5.26
-    container_name: zhiyi-neo4j
+    container_name: zhiyi-next-neo4j
     environment:
       NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-zhiyineo4j}
       NEO4J_server_memory_heap_max__size: 1G
@@ -54,18 +54,20 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: zhiyi-redis
+    container_name: zhiyi-next-redis
     ports:
-      - "6379:6379"
+      - "${ZHIYI_REDIS_HOST_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
 
   # ============ 应用层 ============
   api:
     build: ./api
-    container_name: zhiyi-api
+    container_name: zhiyi-next-api
     env_file:
       - .env
+      - path: ./api/eval/.env.eval
+        required: false
     environment:
       POSTGRES_HOST: postgres
       ES_HOST: http://elasticsearch:9200
@@ -74,7 +76,13 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2
     ports:
-      - "8000:8000"
+      - "${ZHIYI_API_HOST_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
     volumes:
       - ./api/storage:/app/storage
     depends_on:
@@ -89,10 +97,12 @@ services:
 
   worker:
     build: ./api
-    container_name: zhiyi-worker
+    container_name: zhiyi-next-worker
     command: celery -A app.celery_app.celery_app worker -l info -Q default,parse,memory --pool=threads --concurrency=6
     env_file:
       - .env
+      - path: ./api/eval/.env.eval
+        required: false
     environment:
       POSTGRES_HOST: postgres
       ES_HOST: http://elasticsearch:9200
@@ -106,11 +116,32 @@ services:
       - redis
       - api
 
+  beat:
+    build: ./api
+    container_name: zhiyi-next-beat
+    command: celery -A app.celery_app.celery_app beat -l info
+    env_file:
+      - .env
+      - path: ./api/eval/.env.eval
+        required: false
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    depends_on:
+      - redis
+      - api
+
   web:
-    build: ./web
-    container_name: zhiyi-web
+    build:
+      context: ./web
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-docker.m.daocloud.io/library/node:22-alpine}
+        NGINX_IMAGE: ${NGINX_IMAGE:-docker.m.daocloud.io/library/nginx:alpine}
+    container_name: zhiyi-next-web
     ports:
-      - "5173:80"
+      - "${ZHIYI_WEB_HOST_PORT:-5173}:80"
     depends_on:
       - api
 

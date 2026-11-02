@@ -1,0 +1,902 @@
+[
+  {
+    "question": "用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-01-1",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-01-2",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "资料里有没有说明：用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-01-3",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "我想核对文档中的信息，用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-01-4",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "从知识库内容看，用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-01-5",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "用户现在住在哪个城市？",
+    "relevant_entities": [
+      "上海",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-02-1",
+    "query_group": "memory_retrieval-02"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户现在住在哪个城市？",
+    "relevant_entities": [
+      "上海",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-02-2",
+    "query_group": "memory_retrieval-02"
+  },
+  {
+    "question": "资料里有没有说明：用户现在住在哪个城市？",
+    "relevant_entities": [
+      "上海",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-02-3",
+    "query_group": "memory_retrieval-02"
+  },
+  {
+    "question": "我想核对文档中的信息，用户现在住在哪个城市？",
+    "relevant_entities": [
+      "上海",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-02-4",
+    "query_group": "memory_retrieval-02"
+  },
+  {
+    "question": "从知识库内容看，用户现在住在哪个城市？",
+    "relevant_entities": [
+      "上海",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-02-5",
+    "query_group": "memory_retrieval-02"
+  },
+  {
+    "question": "用户住在上海哪个区？",
+    "relevant_entities": [
+      "徐汇区",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-03-1",
+    "query_group": "memory_retrieval-03"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户住在上海哪个区？",
+    "relevant_entities": [
+      "徐汇区",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-03-2",
+    "query_group": "memory_retrieval-03"
+  },
+  {
+    "question": "资料里有没有说明：用户住在上海哪个区？",
+    "relevant_entities": [
+      "徐汇区",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-03-3",
+    "query_group": "memory_retrieval-03"
+  },
+  {
+    "question": "我想核对文档中的信息，用户住在上海哪个区？",
+    "relevant_entities": [
+      "徐汇区",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-03-4",
+    "query_group": "memory_retrieval-03"
+  },
+  {
+    "question": "从知识库内容看，用户住在上海哪个区？",
+    "relevant_entities": [
+      "徐汇区",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-03-5",
+    "query_group": "memory_retrieval-03"
+  },
+  {
+    "question": "用户养了什么宠物？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-04-1",
+    "query_group": "memory_retrieval-04"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户养了什么宠物？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-04-2",
+    "query_group": "memory_retrieval-04"
+  },
+  {
+    "question": "资料里有没有说明：用户养了什么宠物？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-04-3",
+    "query_group": "memory_retrieval-04"
+  },
+  {
+    "question": "我想核对文档中的信息，用户养了什么宠物？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-04-4",
+    "query_group": "memory_retrieval-04"
+  },
+  {
+    "question": "从知识库内容看，用户养了什么宠物？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-04-5",
+    "query_group": "memory_retrieval-04"
+  },
+  {
+    "question": "用户的猫叫什么名字？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-05-1",
+    "query_group": "memory_retrieval-05"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户的猫叫什么名字？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-05-2",
+    "query_group": "memory_retrieval-05"
+  },
+  {
+    "question": "资料里有没有说明：用户的猫叫什么名字？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-05-3",
+    "query_group": "memory_retrieval-05"
+  },
+  {
+    "question": "我想核对文档中的信息，用户的猫叫什么名字？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-05-4",
+    "query_group": "memory_retrieval-05"
+  },
+  {
+    "question": "从知识库内容看，用户的猫叫什么名字？",
+    "relevant_entities": [
+      "团子",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-05-5",
+    "query_group": "memory_retrieval-05"
+  },
+  {
+    "question": "用户周末喜欢做什么？",
+    "relevant_entities": [
+      "爬山",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-06-1",
+    "query_group": "memory_retrieval-06"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户周末喜欢做什么？",
+    "relevant_entities": [
+      "爬山",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-06-2",
+    "query_group": "memory_retrieval-06"
+  },
+  {
+    "question": "资料里有没有说明：用户周末喜欢做什么？",
+    "relevant_entities": [
+      "爬山",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-06-3",
+    "query_group": "memory_retrieval-06"
+  },
+  {
+    "question": "我想核对文档中的信息，用户周末喜欢做什么？",
+    "relevant_entities": [
+      "爬山",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-06-4",
+    "query_group": "memory_retrieval-06"
+  },
+  {
+    "question": "从知识库内容看，用户周末喜欢做什么？",
+    "relevant_entities": [
+      "爬山",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-06-5",
+    "query_group": "memory_retrieval-06"
+  },
+  {
+    "question": "用户在学什么外语？",
+    "relevant_entities": [
+      "日语",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-07-1",
+    "query_group": "memory_retrieval-07"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户在学什么外语？",
+    "relevant_entities": [
+      "日语",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-07-2",
+    "query_group": "memory_retrieval-07"
+  },
+  {
+    "question": "资料里有没有说明：用户在学什么外语？",
+    "relevant_entities": [
+      "日语",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-07-3",
+    "query_group": "memory_retrieval-07"
+  },
+  {
+    "question": "我想核对文档中的信息，用户在学什么外语？",
+    "relevant_entities": [
+      "日语",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-07-4",
+    "query_group": "memory_retrieval-07"
+  },
+  {
+    "question": "从知识库内容看，用户在学什么外语？",
+    "relevant_entities": [
+      "日语",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-07-5",
+    "query_group": "memory_retrieval-07"
+  },
+  {
+    "question": "用户去哪里旅行过？",
+    "relevant_entities": [
+      "京都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-08-1",
+    "query_group": "memory_retrieval-08"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户去哪里旅行过？",
+    "relevant_entities": [
+      "京都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-08-2",
+    "query_group": "memory_retrieval-08"
+  },
+  {
+    "question": "资料里有没有说明：用户去哪里旅行过？",
+    "relevant_entities": [
+      "京都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-08-3",
+    "query_group": "memory_retrieval-08"
+  },
+  {
+    "question": "我想核对文档中的信息，用户去哪里旅行过？",
+    "relevant_entities": [
+      "京都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-08-4",
+    "query_group": "memory_retrieval-08"
+  },
+  {
+    "question": "从知识库内容看，用户去哪里旅行过？",
+    "relevant_entities": [
+      "京都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-08-5",
+    "query_group": "memory_retrieval-08"
+  },
+  {
+    "question": "用户用什么相机拍照？",
+    "relevant_entities": [
+      "索尼相机",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-09-1",
+    "query_group": "memory_retrieval-09"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户用什么相机拍照？",
+    "relevant_entities": [
+      "索尼相机",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-09-2",
+    "query_group": "memory_retrieval-09"
+  },
+  {
+    "question": "资料里有没有说明：用户用什么相机拍照？",
+    "relevant_entities": [
+      "索尼相机",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-09-3",
+    "query_group": "memory_retrieval-09"
+  },
+  {
+    "question": "我想核对文档中的信息，用户用什么相机拍照？",
+    "relevant_entities": [
+      "索尼相机",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-09-4",
+    "query_group": "memory_retrieval-09"
+  },
+  {
+    "question": "从知识库内容看，用户用什么相机拍照？",
+    "relevant_entities": [
+      "索尼相机",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-09-5",
+    "query_group": "memory_retrieval-09"
+  },
+  {
+    "question": "用户用什么牌子的手机？",
+    "relevant_entities": [
+      "iPhone",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-10-1",
+    "query_group": "memory_retrieval-10"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户用什么牌子的手机？",
+    "relevant_entities": [
+      "iPhone",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-10-2",
+    "query_group": "memory_retrieval-10"
+  },
+  {
+    "question": "资料里有没有说明：用户用什么牌子的手机？",
+    "relevant_entities": [
+      "iPhone",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-10-3",
+    "query_group": "memory_retrieval-10"
+  },
+  {
+    "question": "我想核对文档中的信息，用户用什么牌子的手机？",
+    "relevant_entities": [
+      "iPhone",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-10-4",
+    "query_group": "memory_retrieval-10"
+  },
+  {
+    "question": "从知识库内容看，用户用什么牌子的手机？",
+    "relevant_entities": [
+      "iPhone",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-10-5",
+    "query_group": "memory_retrieval-10"
+  },
+  {
+    "question": "用户喜欢喝什么咖啡？",
+    "relevant_entities": [
+      "拿铁",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-11-1",
+    "query_group": "memory_retrieval-11"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户喜欢喝什么咖啡？",
+    "relevant_entities": [
+      "拿铁",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-11-2",
+    "query_group": "memory_retrieval-11"
+  },
+  {
+    "question": "资料里有没有说明：用户喜欢喝什么咖啡？",
+    "relevant_entities": [
+      "拿铁",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-11-3",
+    "query_group": "memory_retrieval-11"
+  },
+  {
+    "question": "我想核对文档中的信息，用户喜欢喝什么咖啡？",
+    "relevant_entities": [
+      "拿铁",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-11-4",
+    "query_group": "memory_retrieval-11"
+  },
+  {
+    "question": "从知识库内容看，用户喜欢喝什么咖啡？",
+    "relevant_entities": [
+      "拿铁",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-11-5",
+    "query_group": "memory_retrieval-11"
+  },
+  {
+    "question": "用户爱吃什么？",
+    "relevant_entities": [
+      "火锅",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-12-1",
+    "query_group": "memory_retrieval-12"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户爱吃什么？",
+    "relevant_entities": [
+      "火锅",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-12-2",
+    "query_group": "memory_retrieval-12"
+  },
+  {
+    "question": "资料里有没有说明：用户爱吃什么？",
+    "relevant_entities": [
+      "火锅",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-12-3",
+    "query_group": "memory_retrieval-12"
+  },
+  {
+    "question": "我想核对文档中的信息，用户爱吃什么？",
+    "relevant_entities": [
+      "火锅",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-12-4",
+    "query_group": "memory_retrieval-12"
+  },
+  {
+    "question": "从知识库内容看，用户爱吃什么？",
+    "relevant_entities": [
+      "火锅",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-12-5",
+    "query_group": "memory_retrieval-12"
+  },
+  {
+    "question": "用户用什么工具记笔记？",
+    "relevant_entities": [
+      "Notion",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-13-1",
+    "query_group": "memory_retrieval-13"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户用什么工具记笔记？",
+    "relevant_entities": [
+      "Notion",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-13-2",
+    "query_group": "memory_retrieval-13"
+  },
+  {
+    "question": "资料里有没有说明：用户用什么工具记笔记？",
+    "relevant_entities": [
+      "Notion",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-13-3",
+    "query_group": "memory_retrieval-13"
+  },
+  {
+    "question": "我想核对文档中的信息，用户用什么工具记笔记？",
+    "relevant_entities": [
+      "Notion",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-13-4",
+    "query_group": "memory_retrieval-13"
+  },
+  {
+    "question": "从知识库内容看，用户用什么工具记笔记？",
+    "relevant_entities": [
+      "Notion",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-13-5",
+    "query_group": "memory_retrieval-13"
+  },
+  {
+    "question": "用户最好的朋友是谁？",
+    "relevant_entities": [
+      "王磊",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-14-1",
+    "query_group": "memory_retrieval-14"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户最好的朋友是谁？",
+    "relevant_entities": [
+      "王磊",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-14-2",
+    "query_group": "memory_retrieval-14"
+  },
+  {
+    "question": "资料里有没有说明：用户最好的朋友是谁？",
+    "relevant_entities": [
+      "王磊",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-14-3",
+    "query_group": "memory_retrieval-14"
+  },
+  {
+    "question": "我想核对文档中的信息，用户最好的朋友是谁？",
+    "relevant_entities": [
+      "王磊",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-14-4",
+    "query_group": "memory_retrieval-14"
+  },
+  {
+    "question": "从知识库内容看，用户最好的朋友是谁？",
+    "relevant_entities": [
+      "王磊",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-14-5",
+    "query_group": "memory_retrieval-14"
+  },
+  {
+    "question": "用户的妹妹是谁？",
+    "relevant_entities": [
+      "林晓",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-15-1",
+    "query_group": "memory_retrieval-15"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户的妹妹是谁？",
+    "relevant_entities": [
+      "林晓",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-15-2",
+    "query_group": "memory_retrieval-15"
+  },
+  {
+    "question": "资料里有没有说明：用户的妹妹是谁？",
+    "relevant_entities": [
+      "林晓",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-15-3",
+    "query_group": "memory_retrieval-15"
+  },
+  {
+    "question": "我想核对文档中的信息，用户的妹妹是谁？",
+    "relevant_entities": [
+      "林晓",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-15-4",
+    "query_group": "memory_retrieval-15"
+  },
+  {
+    "question": "从知识库内容看，用户的妹妹是谁？",
+    "relevant_entities": [
+      "林晓",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-15-5",
+    "query_group": "memory_retrieval-15"
+  },
+  {
+    "question": "用户的妹妹住在哪里？",
+    "relevant_entities": [
+      "林晓",
+      "成都"
+    ],
+    "case_id": "memory_retrieval-16-1",
+    "query_group": "memory_retrieval-16"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户的妹妹住在哪里？",
+    "relevant_entities": [
+      "林晓",
+      "成都"
+    ],
+    "case_id": "memory_retrieval-16-2",
+    "query_group": "memory_retrieval-16"
+  },
+  {
+    "question": "资料里有没有说明：用户的妹妹住在哪里？",
+    "relevant_entities": [
+      "林晓",
+      "成都"
+    ],
+    "case_id": "memory_retrieval-16-3",
+    "query_group": "memory_retrieval-16"
+  },
+  {
+    "question": "我想核对文档中的信息，用户的妹妹住在哪里？",
+    "relevant_entities": [
+      "林晓",
+      "成都"
+    ],
+    "case_id": "memory_retrieval-16-4",
+    "query_group": "memory_retrieval-16"
+  },
+  {
+    "question": "从知识库内容看，用户的妹妹住在哪里？",
+    "relevant_entities": [
+      "林晓",
+      "成都"
+    ],
+    "case_id": "memory_retrieval-16-5",
+    "query_group": "memory_retrieval-16"
+  },
+  {
+    "question": "用户在哪所大学读书？",
+    "relevant_entities": [
+      "复旦大学",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-17-1",
+    "query_group": "memory_retrieval-17"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户在哪所大学读书？",
+    "relevant_entities": [
+      "复旦大学",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-17-2",
+    "query_group": "memory_retrieval-17"
+  },
+  {
+    "question": "资料里有没有说明：用户在哪所大学读书？",
+    "relevant_entities": [
+      "复旦大学",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-17-3",
+    "query_group": "memory_retrieval-17"
+  },
+  {
+    "question": "我想核对文档中的信息，用户在哪所大学读书？",
+    "relevant_entities": [
+      "复旦大学",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-17-4",
+    "query_group": "memory_retrieval-17"
+  },
+  {
+    "question": "从知识库内容看，用户在哪所大学读书？",
+    "relevant_entities": [
+      "复旦大学",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-17-5",
+    "query_group": "memory_retrieval-17"
+  },
+  {
+    "question": "用户的老家在哪？",
+    "relevant_entities": [
+      "成都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-18-1",
+    "query_group": "memory_retrieval-18"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户的老家在哪？",
+    "relevant_entities": [
+      "成都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-18-2",
+    "query_group": "memory_retrieval-18"
+  },
+  {
+    "question": "资料里有没有说明：用户的老家在哪？",
+    "relevant_entities": [
+      "成都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-18-3",
+    "query_group": "memory_retrieval-18"
+  },
+  {
+    "question": "我想核对文档中的信息，用户的老家在哪？",
+    "relevant_entities": [
+      "成都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-18-4",
+    "query_group": "memory_retrieval-18"
+  },
+  {
+    "question": "从知识库内容看，用户的老家在哪？",
+    "relevant_entities": [
+      "成都",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-18-5",
+    "query_group": "memory_retrieval-18"
+  },
+  {
+    "question": "用户有没有摄影的爱好？",
+    "relevant_entities": [
+      "摄影",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-19-1",
+    "query_group": "memory_retrieval-19"
+  },
+  {
+    "question": "请根据我上传的资料回答：用户有没有摄影的爱好？",
+    "relevant_entities": [
+      "摄影",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-19-2",
+    "query_group": "memory_retrieval-19"
+  },
+  {
+    "question": "资料里有没有说明：用户有没有摄影的爱好？",
+    "relevant_entities": [
+      "摄影",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-19-3",
+    "query_group": "memory_retrieval-19"
+  },
+  {
+    "question": "我想核对文档中的信息，用户有没有摄影的爱好？",
+    "relevant_entities": [
+      "摄影",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-19-4",
+    "query_group": "memory_retrieval-19"
+  },
+  {
+    "question": "从知识库内容看，用户有没有摄影的爱好？",
+    "relevant_entities": [
+      "摄影",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-19-5",
+    "query_group": "memory_retrieval-19"
+  },
+  {
+    "question": "请从用户长期记忆里回答：用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-extra-001",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "基于以往对话，用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-extra-002",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "用户曾经提到过吗：用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-extra-003",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "回顾用户之前告诉系统的内容，用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-extra-004",
+    "query_group": "memory_retrieval-01"
+  },
+  {
+    "question": "关于用户个人信息，用户是做什么工作的？",
+    "relevant_entities": [
+      "产品经理",
+      "用户"
+    ],
+    "case_id": "memory_retrieval-extra-005",
+    "query_group": "memory_retrieval-01"
+  }
+]

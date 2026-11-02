@@ -1,0 +1,12 @@
+{
+  "scope": "isolated Elasticsearch with synthetic 2D vectors; not real embedding quality",
+  "passed": [
+    "tenant isolation",
+    "low relevance excluded from tool evidence",
+    "empty retrieval structured",
+    "embedding outage falls back to BM25"
+  ],
+  "evidence_ids": [
+    "K1"
+  ]
+}

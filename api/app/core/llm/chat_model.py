@@ -3,11 +3,13 @@
 五个 provider（openai/qwen/doubao/deepseek/zhipu）均为 OpenAI 兼容协议，
 直接用 ChatOpenAI(base_url, api_key, model) 即可，无需为异构协议做动态代理。
 """
+from dataclasses import dataclass, field
 import uuid
 
 from langchain_openai import ChatOpenAI
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.exceptions import BizError
 from app.core.security import decrypt_secret
 from app.models.model_config_model import ModelConfig
@@ -18,12 +20,34 @@ CAP_FUNCTION_CALL = "function_call"
 CAP_VISION = "vision"
 
 
+@dataclass(frozen=True)
+class LocalChatConfig:
+    """仅本地 development 使用的环境变量模型配置，不写入用户配置表。"""
+
+    model_name: str
+    base_url: str
+    api_key: str = field(repr=False)
+    capability: tuple[str, ...] = ()
+
+
 async def get_default_chat_config(
     session: AsyncSession, user_id: uuid.UUID
-) -> ModelConfig:
+) -> ModelConfig | LocalChatConfig:
     """取用户默认的对话模型配置；无则报错。"""
     configs = await ModelConfigRepository(session).list_by_user(user_id, "chat")
     if not configs:
+        if (
+            settings.app_env.lower() == "development"
+            and settings.eval_chat_base_url
+            and settings.eval_chat_model
+            and settings.eval_chat_key
+        ):
+            return LocalChatConfig(
+                model_name=settings.eval_chat_model,
+                base_url=settings.eval_chat_base_url,
+                api_key=settings.eval_chat_key,
+                capability=(CAP_FUNCTION_CALL,),
+            )
         raise BizError("未配置对话模型，请先在模型配置中添加", code=2010)
     return next((c for c in configs if c.is_default), configs[0])
 
@@ -39,7 +63,10 @@ async def get_default_config_for_type(
 
 
 def build_chat_model(
-    config: ModelConfig, *, temperature: float = 0.7, streaming: bool = True
+    config: ModelConfig | LocalChatConfig,
+    *,
+    temperature: float = 0.7,
+    streaming: bool = True,
 ) -> ChatOpenAI:
     """按模型配置实例化 ChatOpenAI。
 
@@ -48,15 +75,23 @@ def build_chat_model(
     """
     return ChatOpenAI(
         model=config.model_name,
-        api_key=decrypt_secret(config.api_key_encrypted),
+        api_key=(
+            config.api_key
+            if isinstance(config, LocalChatConfig)
+            else decrypt_secret(config.api_key_encrypted)
+        ),
         base_url=config.base_url.rstrip("/"),
         temperature=temperature,
         streaming=streaming,
         stream_usage=True,
+        max_tokens=settings.agent_output_token_budget,
+        timeout=settings.agent_model_timeout_seconds,
+        max_retries=1,
+        extra_body={"thinking":{"type":"disabled"}} if config.model_name.startswith("deepseek-v4-") else None,
     )
 
 
-def supports_function_call(config: ModelConfig) -> bool:
+def supports_function_call(config: ModelConfig | LocalChatConfig) -> bool:
     """模型是否支持原生 function calling（按 capability 标记判断）。"""
     return CAP_FUNCTION_CALL in (config.capability or [])
 
@@ -67,7 +102,7 @@ async def build_default_chat_model(
     *,
     temperature: float = 0.7,
     streaming: bool = True,
-) -> tuple[ChatOpenAI, ModelConfig]:
+) -> tuple[ChatOpenAI, ModelConfig | LocalChatConfig]:
     """取默认对话配置并构建 ChatOpenAI，返回 (model, config)。"""
     config = await get_default_chat_config(session, user_id)
     model = build_chat_model(config, temperature=temperature, streaming=streaming)

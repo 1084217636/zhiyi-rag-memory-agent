@@ -8,7 +8,8 @@ from pathlib import Path
 
 from app.core.memory.extraction.orchestrator import run_extraction
 from app.core.memory.graph_schema import ensure_graph_schema
-from app.core.rag.chunker import chunk_parent_child
+from app.core.rag.chunker import ChunkConfig, chunk_parent_child
+from app.config import settings
 from app.core.rag.es_index import CHUNK_TYPE_CHILD, CHUNK_TYPE_PARENT, ensure_index
 from app.core.rag.es_store import build_chunk_doc, bulk_index, delete_by_source
 from eval.eval_config import EVAL_USER_ID
@@ -22,13 +23,24 @@ async def ingest_corpus(embed_client) -> int:
     """把 fixtures/corpus/*.md 分块+向量化+写 ES。返回写入文档数。"""
     await ensure_index()
     uid = str(EVAL_USER_ID)
-    docs = sorted(_CORPUS_DIR.glob("*.md")) + sorted(_CORPUS_DIR.glob("*.txt"))
+    extended = _FIXTURES / "corpus_100"
+    docs = (sorted(_CORPUS_DIR.glob("*.md")) + sorted(_CORPUS_DIR.glob("*.txt"))
+            + sorted(extended.glob("*.md")))
+    if len(list(extended.glob("*.md"))) != 100:
+        raise RuntimeError("100-document evaluation corpus is incomplete")
     total = len(docs)
     for i, path in enumerate(docs, 1):
         source_id = path.stem  # 文件名（去扩展名）作为 source_id，gold 按它引用
         print(f"  [语料] {i}/{total} {source_id} 分块+向量化+写 ES…")
         text = path.read_text(encoding="utf-8")
-        parents = chunk_parent_child(text)
+        chunk_config = ChunkConfig(
+            parent_tokens=settings.rag_parent_chunk_tokens,
+            child_tokens=settings.rag_child_chunk_tokens,
+            overlap_tokens=settings.rag_child_overlap_tokens,
+        )
+        chunk_policy = (f"section_sentence:p{chunk_config.parent_tokens}:"
+                        f"c{chunk_config.child_tokens}:o{chunk_config.overlap_tokens}")
+        parents = chunk_parent_child(text, chunk_config)
         await delete_by_source(uid, source_id)  # 幂等：先清旧
         es_docs: list[dict] = []
         for parent in parents:
@@ -36,6 +48,7 @@ async def ingest_corpus(embed_client) -> int:
                 user_id=uid, source_type="document", source_id=source_id,
                 doc_name=path.name, chunk_type=CHUNK_TYPE_PARENT,
                 content=parent.content, vector=None,
+                chunk_policy=chunk_policy,
             )
             es_docs.append(parent_doc)
             if parent.children:
@@ -45,6 +58,7 @@ async def ingest_corpus(embed_client) -> int:
                         user_id=uid, source_type="document", source_id=source_id,
                         doc_name=path.name, chunk_type=CHUNK_TYPE_CHILD,
                         content=child, vector=vec, parent_id=parent_doc["_id"],
+                        chunk_policy=chunk_policy,
                     ))
         await bulk_index(es_docs)
     return len(docs)

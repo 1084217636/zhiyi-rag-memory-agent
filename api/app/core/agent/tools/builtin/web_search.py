@@ -1,6 +1,7 @@
 """联网搜索工具：从互联网获取实时信息。需用户配置 websearch 模型。"""
+import json
 from langchain_core.tools import StructuredTool
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.agent.tools.base import ToolBuildContext, ToolSpec, register_tool
 from app.core.logging import get_logger
@@ -11,7 +12,8 @@ KEY = "web_search"
 
 
 class _QueryInput(BaseModel):
-    query: str = Field(..., description="检索的问题或关键词")
+    model_config = ConfigDict(extra="forbid")
+    query: str = Field(..., min_length=1, max_length=2000, description="检索的问题或关键词")
 
 
 async def _get_websearch_config(session, user_id):
@@ -39,10 +41,10 @@ async def _build(ctx: ToolBuildContext) -> StructuredTool | None:
 
         try:
             result = await web_search(provider, api_key, query, top_k=10)
-        except Exception as e:
-            logger.warning("联网搜索失败: %s", e)
+        except Exception:
+            logger.exception("联网搜索失败")
             stats_holder[KEY] = {"web_count": 0, "provider": provider}
-            return f"联网搜索失败：{e}"
+            return json.dumps({"status": "error", "message": "联网搜索暂不可用"}, ensure_ascii=False)
         # 统计：按结果块数 [1] [2] ... 推断网页数；空返回则记 0
         import re
 

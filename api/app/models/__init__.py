@@ -3,6 +3,7 @@ from app.models.agent_trace_model import AgentSpan, AgentTrace
 from app.models.conversation_model import Conversation, Message
 from app.models.document_model import Document
 from app.models.knowledge_base_model import KnowledgeBase
+from app.models.research_artifact_model import ResearchArtifact
 from app.models.mcp_server_model import MCPServer
 from app.models.memory_model import Memory
 from app.models.model_config_model import ModelConfig
@@ -17,6 +18,7 @@ __all__ = [
     "Message",
     "Document",
     "KnowledgeBase",
+    "ResearchArtifact",
     "MCPServer",
     "Memory",
     "ModelConfig",

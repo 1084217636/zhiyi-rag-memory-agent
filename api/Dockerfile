@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 先装依赖（利用缓存层）
 COPY pyproject.toml uv.lock* ./
-RUN uv sync --no-install-project --no-dev
+RUN uv sync --locked --no-install-project --no-dev
 
 COPY . .
 

@@ -1,4 +1,4 @@
-"""混合检索：向量召回 + BM25 召回 → 加权融合 →（可选）rerank 重排。
+"""混合检索：向量召回 + BM25 召回 → 配置的名次融合 →（可选）rerank 重排。
 
 强制 user_id 过滤做多租户隔离。命中子块后返回其父块内容提供更大上下文。
 """
@@ -9,24 +9,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.llm.resolver import get_client_for_type, get_optional_client_for_type
 from app.core.logging import get_logger
 from app.core.rag.es_index import CHUNK_TYPE_CHILD, CHUNK_TYPE_IMAGE, CHUNKS_INDEX
+from app.core.rag.fusion import FusionConfig, fuse_scores
+from app.core.rag.query_embedding_cache import embed_query
+from app.config import settings
 from app.db.elastic import get_es
 
 logger = get_logger(__name__)
-
-# 融合权重
-_VECTOR_WEIGHT = 0.6
-_BM25_WEIGHT = 0.4
-
-
-def _normalize(scores: dict[str, float]) -> dict[str, float]:
-    if not scores:
-        return {}
-    vals = list(scores.values())
-    lo, hi = min(vals), max(vals)
-    if hi - lo < 1e-9:
-        return {k: 1.0 for k in scores}
-    return {k: (v - lo) / (hi - lo) for k, v in scores.items()}
-
 
 async def hybrid_search(
     session: AsyncSession,
@@ -38,6 +26,7 @@ async def hybrid_search(
     source_type: str | None = None,
     min_vector_score: float | None = None,
     kb_ids: list[str] | None = None,
+    fusion_config: FusionConfig | None = None,
 ) -> list[dict]:
     """混合检索，返回 top_k 个结果（含 content / doc_name / source_id / score）。
 
@@ -73,23 +62,21 @@ async def hybrid_search(
     if source_type:
         base_filter.append({"term": {"source_type": source_type}})
 
-    # 1. 向量召回
-    embed_client = await get_client_for_type(session, user_id, "embedding")
-    query_vector = await embed_client.embed_one(query)
-    knn_resp = await es.search(
-        index=CHUNKS_INDEX,
-        body={
-            "size": recall_size,
-            "query": {"bool": {"filter": base_filter}},
-            "knn": {
-                "field": "vector",
-                "query_vector": query_vector,
-                "k": recall_size,
-                "num_candidates": recall_size * 5,
-                "filter": {"bool": {"filter": base_filter}},
+    if kb_ids == []:
+        return []
+    # Embedding outages may fall back to lexical retrieval; errors are not evidence.
+    knn_resp = {"hits":{"hits":[]}}
+    try:
+        embed_client = await get_client_for_type(session, user_id, "embedding")
+        query_vector = await embed_query(embed_client, uid, query)
+        knn_resp = await es.search(index=CHUNKS_INDEX,body={
+            "size":recall_size,"knn":{
+                "field":"vector","query_vector":query_vector,"k":recall_size,
+                "num_candidates":recall_size*5,"filter":{"bool":{"filter":base_filter}},
             },
-        },
-    )
+        })
+    except Exception as exc:
+        logger.warning("向量检索失败，尝试BM25: %s",type(exc).__name__)
 
     # 2. BM25 召回
     bm25_resp = await es.search(
@@ -105,7 +92,7 @@ async def hybrid_search(
         },
     )
 
-    # 3. 收集 + 归一化 + 加权融合
+    # 3. 合并两路召回结果，并按 RRF 或配置的加权策略融合
     hits: dict[str, dict] = {}
     vec_scores: dict[str, float] = {}
     bm_scores: dict[str, float] = {}
@@ -116,13 +103,12 @@ async def hybrid_search(
         hits[h["_id"]] = h["_source"]
         bm_scores[h["_id"]] = h["_score"]
 
-    vec_n = _normalize(vec_scores)
-    bm_n = _normalize(bm_scores)
-    fused: dict[str, float] = {}
-    for cid in hits:
-        fused[cid] = (
-            _VECTOR_WEIGHT * vec_n.get(cid, 0.0) + _BM25_WEIGHT * bm_n.get(cid, 0.0)
-        )
+    fusion_config = fusion_config or FusionConfig(
+        method=settings.rag_fusion_method,
+        vector_weight=settings.rag_vector_weight,
+        rrf_k=settings.rag_rrf_k,
+    )
+    fused = fuse_scores(vec_scores, bm_scores, fusion_config)
 
     # 3.5 精确模式（全局搜索）：纯语义余弦门控
     # ES cosine knn 的 _score = (1 + cos) / 2 → cos = 2*score - 1
@@ -162,7 +148,7 @@ async def hybrid_search(
             reranked = await rerank_client.rerank(query, docs, top_n=top_k)
             candidate_ids = [candidate_ids[idx] for idx, _ in reranked]
         except Exception as e:
-            logger.warning("rerank 失败，回退加权融合排序: %s", e)
+            logger.warning("rerank 失败，保留初始融合排序: %s", type(e).__name__)
 
     # 5. 取 top_k，返回父块内容（small-to-big）
     results: list[dict] = []
@@ -178,6 +164,8 @@ async def hybrid_search(
                 "source_type": src.get("source_type"),
                 "kb_id": src.get("kb_id"),
                 "score": round(fused.get(cid, 0.0), 4),
+                "retrieval_signals": {"cosine":2*vec_scores[cid]-1 if cid in vec_scores else None,
+                                      "bm25":bm_scores.get(cid,0)},
             }
         )
     return results

@@ -8,7 +8,7 @@ from app.core.dependencies import get_current_user
 from app.core.response import success
 from app.db.postgres import get_session
 from app.models.user_model import User
-from app.schemas.memory_schema import MemorySearchRequest, RememberRequest
+from app.schemas.memory_schema import MemorySearchRequest, RememberRequest, MemoryResolutionRequest
 from app.services.memory_service import MemoryService
 
 router = APIRouter(prefix="/memories", tags=["memory"])
@@ -46,6 +46,28 @@ async def list_memories(page: int = Query(1, ge=1), page_size: int = Query(20, g
     service = MemoryService(session)
     items, total = await service.list_memories(user.id, page, page_size)
     return success({"total": total, "page": page, "page_size": page_size, "items": [service.to_out_dict(item) for item in items]})
+
+
+@router.get("/policy/status")
+async def memory_policy_status(user: User = Depends(get_current_user)):
+    from app.repositories.neo4j.memory_graph_repository import MemoryGraphRepository
+    return success(await MemoryGraphRepository().memory_policy_status(str(user.id)))
+
+
+@router.get("/policy/operations")
+async def memory_policy_operations(user: User = Depends(get_current_user)):
+    from app.repositories.neo4j.memory_graph_repository import MemoryGraphRepository
+    return success(await MemoryGraphRepository().memory_operations(str(user.id)))
+
+
+@router.post("/statements/{statement_id}/resolve")
+async def resolve_statement(statement_id: str,body: MemoryResolutionRequest,user: User = Depends(get_current_user)):
+    from app.repositories.neo4j.memory_graph_repository import MemoryGraphRepository
+    from app.core.exceptions import BizError
+    changed=await MemoryGraphRepository().resolve_memory_statement(str(user.id),statement_id,body.action)
+    if not changed:
+        raise BizError("待确认记忆不存在或不属于当前用户",code=3002,status_code=404)
+    return success(message="记忆确认已处理")
 
 
 @router.get("/{memory_id}")

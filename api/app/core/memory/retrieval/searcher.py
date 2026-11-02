@@ -34,6 +34,8 @@ async def _supporting_statements_by_entity(
         seen[eid].add(statement)
         grouped[eid].append({
             "statement": statement,
+            "id": row.get("statement_id"),
+            "memory_kind": row.get("memory_kind", "FACT"),
             "valid_at": row.get("valid_at"),
             "invalid_at": row.get("invalid_at"),
             "dialog_at": row.get("dialog_at"),
@@ -114,6 +116,22 @@ async def search_memory(
     """
     repo = MemoryGraphRepository()
     uid = str(user_id)
+
+    # Governed statements retain their type and provenance. No model sees raw
+    # archived/superseded records through this path.
+    governed_user = False
+    if settings.memory_governance_enabled:
+        try:
+            governed_user = await repo.has_memory_ledger(uid)
+            qvec = query_vector if query_vector is not None else await embed_client.embed_one(query)
+            query_vector = qvec
+            governed = await repo.search_active_statements(uid, qvec, top_k)
+            if governed:
+                return [{"id":r["id"],"name":"用户记忆","type":"陈述","description":"",
+                         "confidence":r.get("confidence",0.8),"score":r["score"],"relations":[],
+                         "statements":[r]} for r in governed]
+        except Exception as exc:
+            logger.warning("陈述语义召回失败，尝试原有全文路径: %s",type(exc).__name__)
 
     # 1. 向量召回
     vec_hits: dict[str, dict] = {}
@@ -199,6 +217,11 @@ async def search_memory(
                 "relations": relations_by_entity.get(eid, []),
                 "statements": statements_by_entity.get(eid, []),
             })
+        if governed_user:
+            for item in results:
+                item["description"] = ""
+                item["relations"] = []
+            results = [item for item in results if item.get("statements")]
         return results
 
     vec_n = _normalize(vec_scores)
@@ -260,6 +283,11 @@ async def search_memory(
             "relations": relations_by_entity.get(eid, []),
             "statements": statements_by_entity.get(eid, []),
         })
+    if governed_user:
+        for item in results:
+            item["description"] = ""
+            item["relations"] = []
+        results = [item for item in results if item.get("statements")]
     return results
 
 
@@ -277,8 +305,9 @@ def format_memory_context(results: list[dict]) -> str:
             rel_prefix = "    · 待确认：" if _is_uncertain(rel.get("confidence")) else "    · "
             lines.append(f"{rel_prefix}{r['name']} {rel['predicate']} {obj}")
         for fact in r.get("statements", []):
-            fact_prefix = "    · 事实待确认：" if _is_uncertain(fact.get("confidence")) else "    · 事实："
-            lines.append(f"{fact_prefix}{fact['statement']}")
+            kind = fact.get("memory_kind", "FACT")
+            label = {"FACT":"事实", "EVENT":"历史事件", "PLAN":"计划", "OPINION":"观点", "PREDICTION":"预测", "SUGGESTION":"建议"}.get(kind,"待确认陈述")
+            lines.append(f"    · {label}{'待确认' if _is_uncertain(fact.get('confidence')) else ''}：{fact['statement']}")
     return "\n".join(lines)
 
 

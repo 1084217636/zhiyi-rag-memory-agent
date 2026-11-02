@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta, timezone
 
 from langchain_core.tools import StructuredTool
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.agent.tools.base import ToolBuildContext, ToolSpec, register_tool
 
@@ -14,6 +14,7 @@ _CST = timezone(timedelta(hours=8))
 
 
 class _EmptyInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     query: str = Field(default="", description="无需参数，可留空")
 
 

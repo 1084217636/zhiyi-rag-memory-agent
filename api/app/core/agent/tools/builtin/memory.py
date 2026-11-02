@@ -1,6 +1,8 @@
 """记忆检索工具：从记忆图谱召回相关实体与关系。"""
+import json
+
 from langchain_core.tools import StructuredTool
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.agent.tools.base import ToolBuildContext, ToolSpec, register_tool
 from app.core.memory.retrieval.searcher import format_memory_context, search_memory
@@ -9,7 +11,8 @@ KEY = "memory_search"
 
 
 class _QueryInput(BaseModel):
-    query: str = Field(..., description="检索的问题或关键词")
+    model_config = ConfigDict(extra="forbid")
+    query: str = Field(..., min_length=1, max_length=2000, description="检索的问题或关键词")
 
 
 async def _build(ctx: ToolBuildContext) -> StructuredTool:
@@ -35,8 +38,18 @@ async def _build(ctx: ToolBuildContext) -> StructuredTool:
             "relation_count": relation_count,
         }
         if not results:
-            return "没有检索到相关记忆。"
-        return "检索到以下用户记忆：\n\n" + format_memory_context(results)
+            return json.dumps({"status": "empty", "evidence": []}, ensure_ascii=False)
+        evidence=[]
+        for r in results:
+            for statement in r.get("statements",[]):
+                item={"evidence_id":f"M{len(ctx.citations)+1}","source_id":statement.get("id") or r["id"],
+                      "source_type":"memory","doc_name":"用户记忆",
+                      "memory_kind":statement.get("memory_kind","FACT"),
+                      "content":statement["statement"],"score":r.get("score")}
+                ctx.citations.append(item)
+                evidence.append(item)
+        return json.dumps({"status":"ok","evidence":evidence,
+                           "context":format_memory_context(results)},ensure_ascii=False)
 
     return StructuredTool.from_function(
         coroutine=_run,
