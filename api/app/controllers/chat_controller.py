@@ -79,6 +79,10 @@ async def chat_stream(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
+    # A streaming response sends HTTP 200 before its generator starts. Check
+    # ownership here so an unknown/foreign conversation gets a real 404.
+    if body.conversation_id:
+        await ConversationService(session).get_owned(user.id, body.conversation_id)
     return StreamingResponse(
         ChatService(session).stream_chat(user.id, body),
         media_type="text/event-stream",

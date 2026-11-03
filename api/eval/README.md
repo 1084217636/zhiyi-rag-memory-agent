@@ -54,7 +54,7 @@ eval/
 ## 准备
 
 1. 起存储：`docker compose up -d postgres elasticsearch neo4j redis`。
-2. 复制 `eval/.env.eval.example` → `eval/.env.eval`，填 embedding（必需）、chat（必需）、rerank（可选）的 key。
+2. 复制 `eval/.env.eval.example` → `eval/.env.eval`，填 embedding（必需）、chat（仅生成/抽取评测需要）、rerank（可选）的 key。本地 `zhiyi-ollama.service` 使用 11435 端口；在主机上直接跑评测时，Embedding 地址应指向 `http://127.0.0.1:11435/v1`。
 3. （可选）把 `fixtures/` 的语料/对话/gold 换成你自己的，更贴合真实数据。
 
 ## 运行（在 api/ 目录）
@@ -69,6 +69,7 @@ uv run python -m eval.run_eval --teardown       # 跑完清理评测数据
 uv run python -m eval.chunk_ablation            # 比较 128/256/384 子块，最后恢复默认评测索引
 uv run python -m eval.tune_retrieval --collect   # 冻结候选并比较权重/RRF，不改线上配置
 uv run python -m eval.grounded_metrics results/人工标注答案.jsonl  # 有答案标注后才计算生成指标
+uv run python -m eval.verify_agent_boundaries       # Docker API：隔离用户的答案/越权/恶意文档验收
 ```
 
 > 正式跑前会先做**模型可用性自检**：分别调用 embedding / chat / rerank 确认连得通（embedding 还会校验维度是否与 ES 索引一致），不通的必需模型直接中止、rerank 不通则自动跳过其对比列，避免灌了一半数据才发现 key/url 写错。

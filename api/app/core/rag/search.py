@@ -78,19 +78,27 @@ async def hybrid_search(
     except Exception as exc:
         logger.warning("向量检索失败，尝试BM25: %s",type(exc).__name__)
 
-    # 2. BM25 召回
-    bm25_resp = await es.search(
-        index=CHUNKS_INDEX,
-        body={
-            "size": recall_size,
-            "query": {
-                "bool": {
-                    "must": [{"match": {"content": query}}],
-                    "filter": base_filter,
-                }
+    # Keep either healthy retrieval branch usable. If both fail, propagate the
+    # failure so the Agent reports a tool error instead of claiming no evidence.
+    try:
+        bm25_resp = await es.search(
+            index=CHUNKS_INDEX,
+            body={
+                "size": recall_size,
+                "query": {
+                    "bool": {
+                        "must": [{"match": {"content": query}}],
+                        "filter": base_filter,
+                    }
+                },
             },
-        },
-    )
+        )
+    except Exception as exc:
+        if not knn_resp["hits"]["hits"]:
+            logger.error("向量与BM25检索均不可用: %s", type(exc).__name__)
+            raise
+        logger.warning("BM25检索失败，保留向量结果: %s", type(exc).__name__)
+        bm25_resp = {"hits": {"hits": []}}
 
     # 3. 合并两路召回结果，并按 RRF 或配置的加权策略融合
     hits: dict[str, dict] = {}

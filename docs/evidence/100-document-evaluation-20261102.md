@@ -56,3 +56,12 @@ docker run --rm --network host --user "$(id -u):$(id -g)" \
 需要 Elasticsearch、Neo4j、PostgreSQL、Redis、Celery worker、bge-m3 embedding 和有效对话模型；`eval/.env.eval` 为本地忽略文件。在线验收在 `http://127.0.0.1:8008` 的开发服务进行，脚本每次注册新用户，不改真实用户数据。实际在 LinkGo Redis 占用 6379 时，将知忆测试 Redis 独立放在 6380，API 与 worker 使用相同的 broker 地址。
 
 目前可用 `./scripts/start_local_demo.sh` 启动知忆 Docker 演示，Web 映射到 5174、API 到 8008、Redis 到 6381，Ollama Embedding 由用户级 systemd 服务运行在 11435。上述 6380 是上一轮独立主机进程测试时的端口；Docker 演示使用 6381。页面与 API 在 WSL 内已验证返回 200。Windows 侧到 WSL 端口的连接在本机超时，属于宿主网络转发/防火墙限制，不能因为 WSL 内 200 就说 Windows 浏览器已可访问。
+
+## 2026-11-03 最后一轮后端验收
+
+- 真实检索链路增加双路容错：向量故障用 BM25，BM25 故障且向量有命中时保留向量结果；双路都故障时抛出错误，由 Agent 报告工具失败，不能伪装成“没有资料”。三个故障分支由 `test_rag_branch_failover.py` 验证。
+- 聊天接口在返回 SSE 响应头之前核对 `conversation_id` 归属；陌生人的会话 ID 返回 HTTP 404，不再在流开始后静默创建新会话。单元测试和真实双账号请求均覆盖。
+- `eval.verify_agent_boundaries` 使用两个新建隔离账号，经 API、Celery、Elasticsearch 和真实对话模型完成 5/5 项验收：有据答案含正确引用、资料未记载的数值不被编造、跨用户文档与会话不可访问、恶意文档指令未被执行。报告在被 Git 忽略的 `api/eval/results/agent-boundaries.json`。这 5 项是边界冒烟测试，不能推断总体幻觉率或安全攻击成功率。
+- `eval.verify_online_upload --chat` 再次完成上传→解析→工具检索→Verifier→SSE 引用→研究成果保存与版本更新。`eval.verify_online_memory` 再次完成首轮对话→Celery 抽取→Neo4j 跨会话召回→新会话回答。
+- Ruff 全量通过；`pytest -q api/tests` 为 **101 passed**。本轮 100 文档检索复跑：纯向量 Recall@5/MRR/nDCG@5 为 1.00/1.00/1.00，BM25 为 1.00/0.8537/0.8910，RRF 为 1.00/0.9650/0.9742，加权融合为 1.00/0.9900/0.9926；报告 `report-20261103-102537.md`。这批问题仍是标题明确的容易题，不能声称 RRF 优于纯向量或加权融合。
+- 评测进程第一次连接旧端口 11434 超时；覆盖 `EVAL_EMBED_BASE_URL=http://127.0.0.1:11435/v1` 后复跑通过。本地忽略的 `eval/.env.eval` 应按当前 Ollama 端口更新；在线 Docker API 已使用正确端口。

@@ -19,6 +19,7 @@ from app.core.agent.orchestrator import run_function_calling, run_react
 from app.core.agent.tools import build_enabled_tools
 from app.core.llm.chat_model import build_default_chat_model, supports_function_call
 from app.core.logging import get_logger
+from app.core.exceptions import BizError
 from app.models.conversation_model import ROLE_ASSISTANT, ROLE_USER, Conversation, Message
 from app.repositories.conversation_repository import ConversationRepository, MessageRepository
 from app.repositories.knowledge_base_repository import KnowledgeBaseRepository
@@ -43,6 +44,7 @@ class ChatService:
             existing = await self.conversations.get(user_id, body.conversation_id)
             if existing:
                 return existing
+            raise BizError("会话不存在", code=4002, status_code=404)
         title = body.message.strip()[:20] or "新对话"
         return await self.conversations.create(Conversation(user_id=user_id, title=title))
 
