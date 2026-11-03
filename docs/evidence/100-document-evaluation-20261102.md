@@ -65,3 +65,4 @@ docker run --rm --network host --user "$(id -u):$(id -g)" \
 - `eval.verify_online_upload --chat` 再次完成上传→解析→工具检索→Verifier→SSE 引用→研究成果保存与版本更新。`eval.verify_online_memory` 再次完成首轮对话→Celery 抽取→Neo4j 跨会话召回→新会话回答。
 - Ruff 全量通过；`pytest -q api/tests` 为 **101 passed**。本轮 100 文档检索复跑：纯向量 Recall@5/MRR/nDCG@5 为 1.00/1.00/1.00，BM25 为 1.00/0.8537/0.8910，RRF 为 1.00/0.9650/0.9742，加权融合为 1.00/0.9900/0.9926；报告 `report-20261103-102537.md`。这批问题仍是标题明确的容易题，不能声称 RRF 优于纯向量或加权融合。
 - 评测进程第一次连接旧端口 11434 超时；覆盖 `EVAL_EMBED_BASE_URL=http://127.0.0.1:11435/v1` 后复跑通过。本地忽略的 `eval/.env.eval` 应按当前 Ollama 端口更新；在线 Docker API 已使用正确端口。
+- `eval.verify_grounded_answer_set` 在新建隔离用户下上传 20 份合成 Markdown，经实际 Celery/ES/Agent/Verifier/SSE 运行 30 题：20 道明确数值题全部返回正确数值并引用所属文档，10 道明确未记录备用数值题全部说明无法给出。20/20 引用指向预期文档；端到端耗时 P50 6.78 秒、P95 8.07 秒，整组墙钟时间 287.59 秒。逐题原文与判定在被 Git 忽略的 `api/eval/results/grounded-answers-30.json`。题目带文档名、内容为固定模板，判分采用确定性字符串/来源 ID 规则；这些数字只证明该合成回归集通过，不是开放问题准确率、人工事实支持率或线上延迟 SLO。
