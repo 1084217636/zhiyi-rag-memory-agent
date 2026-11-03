@@ -39,7 +39,7 @@ cd api
 .venv/bin/python -m eval.run_eval --only dedup --skip-setup
 .venv/bin/python -m eval.verify_online_upload --chat
 .venv/bin/python -m eval.verify_online_memory
-CELERY_BROKER_URL=redis://127.0.0.1:6381/1 .venv/bin/python -m eval.verify_memory_governance
+CELERY_BROKER_URL=redis://127.0.0.1:6381/1 CELERY_RESULT_BACKEND=redis://127.0.0.1:6381/2 .venv/bin/python -m eval.verify_memory_governance
 ```
 
 页面验收脚本是 `api/eval/verify_web_ui.cjs`，在本机用 Vite 代理到 API 后运行；需要 Playwright Chromium。它在页面内操作，不通过直接 HTTP 调用冒充前端交互。本机借用 LinkGo 已安装的 Playwright 包并在官方容器中执行：
